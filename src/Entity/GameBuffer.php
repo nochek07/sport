@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="game_buffer")
  * @ORM\Entity(repositoryClass="App\Repository\GameBufferRepository")
  */
-class GameBuffer
+class GameBuffer implements GameInterface
 {
     /**
      * @ORM\Id()
