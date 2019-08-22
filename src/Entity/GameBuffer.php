@@ -24,13 +24,13 @@ class GameBuffer
     private $league;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="gameBuffers")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="gameBuffers1")
      * @ORM\JoinColumn(nullable=false)
      */
     private $team1;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="gameBuffers")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="gameBuffers2")
      * @ORM\JoinColumn(nullable=false)
      */
     private $team2;

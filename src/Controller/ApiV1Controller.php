@@ -10,19 +10,20 @@ use App\Entity\Source;
 use App\Entity\Sport;
 use App\Entity\Team;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DefaultController extends AbstractController
+class ApiV1Controller extends AbstractController
 {
     /**
-     * @Route("/v1/api/add", name="api_post_v1", methods={"POST"})
+     * @Route("/v1/api/add", name="api_add_post_v1", methods={"POST"})
      * @param Request $request
      * @return Response
      * @throws \Exception
      */
-    public function index(Request $request)
+    public function add(Request $request)
     {
         $data = json_decode($request->getContent(), true);
 
@@ -143,15 +144,10 @@ class DefaultController extends AbstractController
                     if ($difference->invert == 1) {
                         $findGame->setDate($date);
                     }
+                    $gameBuffer->setGame($findGame);
                 }
                 $manager->flush();
-
-                echo '<pre>';
-                print_r($league->getName());
-                echo '</pre>';
             }
-
-//            $manager->flush();
         }
 
         return $this->render('base.html.twig');
@@ -166,5 +162,70 @@ class DefaultController extends AbstractController
         $game->setTeam2($gameBuffer->getTeam2());
         $game->setDate($gameBuffer->getDate());
         return $game;
+    }
+
+    /**
+     * @Route("/v1/api/random", name="api_random_get_v1", methods={"GET"})
+     * @param Request $request
+     * @return Response
+     */
+    public function random(Request $request)
+    {
+        $result = [];
+        $manager = $this->getDoctrine()->getManager();
+
+        /**
+         * @var Game $randGame
+         */
+        $randGame = $manager
+            ->getRepository(Game::class)
+            ->getRandom();
+
+        if (isset($randGame)) {
+            $result = [
+                "game" => [
+                    "lang" => $randGame->getLanguage()->getName(),
+                    "sport" => $randGame->getLeague()->getSport()->getName(),
+                    "league" => $randGame->getLeague()->getName(),
+                    "team1" => $randGame->getTeam1()->getName(),
+                    "team2" => $randGame->getTeam2()->getName(),
+                    "date" => $randGame->getDate()->format('Y-m-d G:i:s'),
+                ],
+                "buffers" => []
+            ];
+
+            $filter = [];
+            if (!is_null($request->query->get('source'))) {
+                $filter['source'] = $request->query->get('source');
+            }
+            if (!is_null($request->query->get('start')) && !is_null($request->query->get('end'))) {
+                $filter['start'] = $request->query->get('start');
+                $filter['end'] = $request->query->get('end');
+            }
+
+            $gamesBuffer = $manager
+                ->getRepository(GameBuffer::class)
+                ->findByGame($randGame, $filter);
+
+            /**
+             * @var GameBuffer[] $gamesBuffer
+             */
+            foreach ($gamesBuffer as $gameBuffer) {
+                $result["buffers"][] = [
+                    "lang" => $gameBuffer->getLanguage()->getName(),
+                    "sport" => $gameBuffer->getLeague()->getSport()->getName(),
+                    "league" => $gameBuffer->getLeague()->getName(),
+                    "team1" => $gameBuffer->getTeam1()->getName(),
+                    "team2" => $gameBuffer->getTeam2()->getName(),
+                    "date" => $gameBuffer->getDate()->format('Y-m-d G:i:s'),
+                    "source" => $gameBuffer->getSource()->getName(),
+                ];
+            }
+        }
+
+        $response = new JsonResponse($result);
+        $response->setEncodingOptions(JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
+
+        return $response;
     }
 }

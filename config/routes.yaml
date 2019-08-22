@@ -3,4 +3,4 @@
 
 #index:
 #    path: /
-#    defaults: { _controller: 'App\Controller\DefaultController::index' }
+#    defaults: { _controller: 'App\Controller\ApiV1Controller::index' }

@@ -36,7 +36,7 @@ class Sport
     /**
      * @ORM\Column(type="integer", nullable=false, options={"default" : 0})
      */
-    private $diff;
+    private $diff = 0;
 
     public function __construct()
     {

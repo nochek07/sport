@@ -42,13 +42,19 @@ class Team
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\GameBuffer", mappedBy="team1")
      */
-    private $gameBuffers;
+    private $gameBuffers1;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\GameBuffer", mappedBy="team2")
+     */
+    private $gameBuffers2;
 
     public function __construct()
     {
         $this->games1 = new ArrayCollection();
         $this->games2 = new ArrayCollection();
-        $this->gameBuffers = new ArrayCollection();
+        $this->gameBuffers1 = new ArrayCollection();
+        $this->gameBuffers2 = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -145,28 +151,59 @@ class Team
     /**
      * @return Collection|GameBuffer[]
      */
-    public function getGameBuffers(): Collection
+    public function getGameBuffers1(): Collection
     {
-        return $this->gameBuffers;
+        return $this->gameBuffers1;
     }
 
-    public function addGameBuffer(GameBuffer $gameBuffer): self
+    public function addGameBuffer1(GameBuffer $gameBuffer): self
     {
-        if (!$this->gameBuffers->contains($gameBuffer)) {
-            $this->gameBuffers[] = $gameBuffer;
+        if (!$this->gameBuffers1->contains($gameBuffer)) {
+            $this->gameBuffers1[] = $gameBuffer;
             $gameBuffer->setTeam1($this);
         }
 
         return $this;
     }
 
-    public function removeGameBuffer(GameBuffer $gameBuffer): self
+    public function removeGameBuffer1(GameBuffer $gameBuffer): self
     {
-        if ($this->gameBuffers->contains($gameBuffer)) {
-            $this->gameBuffers->removeElement($gameBuffer);
+        if ($this->gameBuffers1->contains($gameBuffer)) {
+            $this->gameBuffers1->removeElement($gameBuffer);
             // set the owning side to null (unless already changed)
             if ($gameBuffer->getTeam1() === $this) {
                 $gameBuffer->setTeam1(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GameBuffer[]
+     */
+    public function getGameBuffers2(): Collection
+    {
+        return $this->gameBuffers2;
+    }
+
+    public function addGameBuffer2(GameBuffer $gameBuffer): self
+    {
+        if (!$this->gameBuffers2->contains($gameBuffer)) {
+            $this->gameBuffers2[] = $gameBuffer;
+            $gameBuffer->setTeam2($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGameBuffer2(GameBuffer $gameBuffer): self
+    {
+        if ($this->gameBuffers2->contains($gameBuffer)) {
+            $this->gameBuffers2->removeElement($gameBuffer);
+            // set the owning side to null (unless already changed)
+            if ($gameBuffer->getTeam2() === $this) {
+                $gameBuffer->setTeam2(null);
             }
         }
 

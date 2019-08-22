@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\GameBuffer;
+use App\Entity\{Game, GameBuffer};
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -17,6 +17,38 @@ class GameBufferRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, GameBuffer::class);
+    }
+
+    /**
+     * @param Game $game
+     * @param array $filter
+     * @return GameBuffer[]
+     */
+    public function findByGame(Game $game, $filter = [])
+    {
+        $builder = $this->createQueryBuilder('gb')
+            ->andWhere('gb.game = :game')
+            ->setParameter('game', $game);
+
+        if (isset($filter['source'])) {
+            $builder
+                ->leftJoin('App\Entity\Source', 's', 'WITH', 'gb.source = s')
+                ->andWhere('s.name = :source')
+                ->setParameter('source', $filter['source'])
+            ;
+        }
+
+        if (isset($filter['start'])) {
+            $builder
+                ->andWhere('gb.date >= :start AND gb.date <= :end')
+                ->setParameter('start', $filter['start'])
+                ->setParameter('end', $filter['end'])
+            ;
+        }
+
+        return $builder->getQuery()
+            ->getResult()
+        ;
     }
 
     // /**

@@ -26,7 +26,7 @@ class Game
     private $league;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="games")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="games1")
      * @ORM\JoinColumn(nullable=false)
      */
     private $team1;
