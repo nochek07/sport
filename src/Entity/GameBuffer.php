@@ -5,7 +5,12 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="game_buffer")
+ * @ORM\Table(
+ *     name="game_buffer",
+ *     indexes={
+ *          @ORM\Index(name="search_date_idx", columns={"date"})
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\GameBufferRepository")
  */
 class GameBuffer implements GameInterface

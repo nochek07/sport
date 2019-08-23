@@ -7,7 +7,12 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="game")
+ * @ORM\Table(
+ *     name="game",
+ *     indexes={
+ *          @ORM\Index(name="search_date_idx", columns={"date"})
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\GameRepository")
  */
 class Game implements GameInterface

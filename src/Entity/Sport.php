@@ -7,6 +7,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @ORM\Table(
+ *     indexes={
+ *          @ORM\Index(name="search_name_idx", columns={"name"})
+ *     }
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\SportRepository")
  */
 class Sport
