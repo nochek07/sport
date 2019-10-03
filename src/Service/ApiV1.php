@@ -1,38 +1,30 @@
 <?php
 
-namespace App\DependencyInjection;
+namespace App\Service;
 
 use App\Entity\{Game, GameBuffer, GameInterface, Language, League, Source, Sport, Team};
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request;
 
 class ApiV1
 {
     /**
-     * @var EntityManagerInterface $manager
+     * @var EntityManagerInterface
      */
     private $manager;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
 
     /**
      * ApiV1 constructor.
      *
      * @param EntityManagerInterface $manager
-     * @param RequestStack $requestStack
      */
-    public function __construct(EntityManagerInterface $manager, RequestStack $requestStack)
+    public function __construct(EntityManagerInterface $manager)
     {
         $this->manager = $manager;
-        $this->requestStack = $requestStack;
     }
 
-    public function add(): array
+    public function add(Request $request): array
     {
-        $request = $this->requestStack->getCurrentRequest();
         $data = json_decode($request->getContent(), true);
 
         if (isset($data['events'])) {
@@ -103,7 +95,7 @@ class ApiV1
         return ['success' => 0];
     }
 
-    public function random(): array
+    public function random(Request $request): array
     {
         $result = [];
 
@@ -126,8 +118,6 @@ class ApiV1
                 ],
                 "buffers" => []
             ];
-
-            $request = $this->requestStack->getCurrentRequest();
 
             $filter = [];
             if (!is_null($request->query->get('source'))) {
@@ -165,6 +155,7 @@ class ApiV1
      * Get/Set Language
      *
      * @param string $name
+     *
      * @return Language
      */
     public function getLanguage(string $name): Language
@@ -184,6 +175,7 @@ class ApiV1
      * Get/Set Sport
      *
      * @param string $name
+     *
      * @return Sport
      */
     public function getSport(string $name): Sport
@@ -204,6 +196,7 @@ class ApiV1
      *
      * @param string $name
      * @param Sport $sport
+     *
      * @return League
      */
     public function getLeague(string $name, Sport $sport): League
@@ -228,6 +221,7 @@ class ApiV1
      *
      * @param string $name
      * @param Sport $sport
+     *
      * @return Team
      */
     public function getTeam(string $name, Sport $sport): Team
@@ -251,6 +245,7 @@ class ApiV1
      * Get/Set Source
      *
      * @param string $name
+     *
      * @return Source
      */
     public function getSource(string $name): Source
@@ -267,8 +262,11 @@ class ApiV1
     }
 
     /**
+     * Add Game
+     *
      * @param GameInterface $object
      * @param GameInterface|array $data
+     *
      * @return GameInterface
      */
     public function addGame(GameInterface $object, $data): GameInterface
