@@ -20,8 +20,12 @@ class GameBufferRepository extends ServiceEntityRepository
     }
 
     /**
+     * Find GameBuffer by Game
+     * Find GameBuffer by Game and filter
+     *
      * @param Game $game
      * @param array $filter
+     *
      * @return GameBuffer[]
      */
     public function findByGame(Game $game, $filter = [])

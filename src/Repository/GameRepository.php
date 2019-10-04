@@ -20,10 +20,14 @@ class GameRepository extends ServiceEntityRepository
     }
 
     /**
+     * Find Game By GameBuffer and period
+     *
      * @param GameBuffer $buffer
      * @param \DateTime $dateStart
      * @param \DateTime $dateEnd
+     *
      * @return Game|null Returns an array of Game objects
+     *
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findByBuffer(GameBuffer $buffer, \DateTime $dateStart, \DateTime $dateEnd)
@@ -47,6 +51,13 @@ class GameRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * Get random Game
+     *
+     * @return Game|null Returns an array of Game objects
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function getRandom()
     {
         return $this->createQueryBuilder('g')

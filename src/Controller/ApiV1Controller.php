@@ -4,8 +4,7 @@ namespace App\Controller;
 
 use App\Service\ApiV1;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\{JsonResponse, Request};
 use Symfony\Component\Routing\Annotation\Route;
 
 class ApiV1Controller extends AbstractController
@@ -17,10 +16,12 @@ class ApiV1Controller extends AbstractController
      * @param ApiV1 $api
      *
      * @return JsonResponse
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function add(Request $request, ApiV1 $api)
     {
-        $result = $api->add($request);
+        $result = $api->addGame($request);
 
         $response = new JsonResponse($result);
         $response->setEncodingOptions(JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);

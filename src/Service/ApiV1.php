@@ -23,18 +23,27 @@ class ApiV1
         $this->manager = $manager;
     }
 
-    public function add(Request $request): array
+    /**
+     * Add Game
+     *
+     * @param Request $request
+     *
+     * @return array
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function addGame(Request $request): array
     {
         $data = json_decode($request->getContent(), true);
 
         if (isset($data['events'])) {
             foreach ($data['events'] as $event) {
-                $lang = $this->getLanguage($event['lang']);
-                $sport = $this->getSport($event['sport']);
-                $league = $this->getLeague($event['league'], $sport);
-                $team1 = $this->getTeam($event['team1'], $sport);
-                $team2 = $this->getTeam($event['team2'], $sport);
-                $source = $this->getSource($event['source']);
+                $lang = $this->getOrInsertLanguage($event['lang']);
+                $sport = $this->getOrInsertSport($event['sport']);
+                $league = $this->getOrInsertLeague($event['league'], $sport);
+                $team1 = $this->getOrInsertTeam($event['team1'], $sport);
+                $team2 = $this->getOrInsertTeam($event['team2'], $sport);
+                $source = $this->getOrInsertSource($event['source']);
 
                 $date = new \DateTime($event['date']);
 
@@ -51,11 +60,11 @@ class ApiV1
                 $gameBuffer = $this->manager
                     ->getRepository(GameBuffer::class)
                     ->findOneBy($filter);
-                if (is_null($gameBuffer)) {
+                if (!($gameBuffer instanceof GameBuffer)) {
                     /**
                      * @var GameBuffer $gameBuffer
                      */
-                    $gameBuffer = $this->addGame(new GameBuffer(), $filter);
+                    $gameBuffer = $this->fillGame(new GameBuffer(), $filter);
                     $gameBuffer->setSource($source);
                     $this->manager->persist($gameBuffer);
                 }
@@ -73,11 +82,11 @@ class ApiV1
                 $findGame = $this->manager
                     ->getRepository(Game::class)
                     ->findByBuffer($gameBuffer, $dateStart, $dateEnd);
-                if (is_null($findGame)) {
+                if (!($findGame instanceof Game)) {
                     /**
                      * @var Game $game
                      */
-                    $game = $this->addGame(new Game(), $filter);
+                    $game = $this->fillGame(new Game(), $filter);
                     $this->manager->persist($game);
                     $gameBuffer->setGame($game);
                 } else {
@@ -95,6 +104,14 @@ class ApiV1
         return ['success' => 0];
     }
 
+    /**
+     * Get random game
+     * Get random game by filter
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
     public function random(Request $request): array
     {
         $result = [];
@@ -106,7 +123,7 @@ class ApiV1
             ->getRepository(Game::class)
             ->getRandom();
 
-        if (isset($randGame)) {
+        if ($randGame instanceof Game) {
             $result = [
                 "game" => [
                     "lang" => $randGame->getLanguage()->getName(),
@@ -152,18 +169,18 @@ class ApiV1
     }
 
     /**
-     * Get/Set Language
+     * Get or insert Language
      *
      * @param string $name
      *
      * @return Language
      */
-    public function getLanguage(string $name): Language
+    public function getOrInsertLanguage(string $name): Language
     {
         $lang = $this->manager
             ->getRepository(Language::class)
             ->findOneBy(['name' => $name]);
-        if (is_null($lang)) {
+        if (!($lang instanceof Language)) {
             $lang = new Language();
             $lang->setName($name);
             $this->manager->persist($lang);
@@ -172,18 +189,18 @@ class ApiV1
     }
 
     /**
-     * Get/Set Sport
+     * Get or insert Sport
      *
      * @param string $name
      *
      * @return Sport
      */
-    public function getSport(string $name): Sport
+    public function getOrInsertSport(string $name): Sport
     {
         $sport = $this->manager
             ->getRepository(Sport::class)
             ->findOneBy(['name' => $name]);
-        if (is_null($sport)) {
+        if (!($sport instanceof Sport)) {
             $sport = new Sport();
             $sport->setName($name);
             $this->manager->persist($sport);
@@ -192,14 +209,14 @@ class ApiV1
     }
 
     /**
-     * Get/Set League
+     * Get or insert League
      *
      * @param string $name
      * @param Sport $sport
      *
      * @return League
      */
-    public function getLeague(string $name, Sport $sport): League
+    public function getOrInsertLeague(string $name, Sport $sport): League
     {
         $league = $this->manager
             ->getRepository(League::class)
@@ -207,7 +224,7 @@ class ApiV1
                 'name' => $name,
                 'sport' => $sport
             ]);
-        if (is_null($league)) {
+        if (!($league instanceof League)) {
             $league = new League();
             $league->setName($name);
             $league->setSport($sport);
@@ -217,14 +234,14 @@ class ApiV1
     }
 
     /**
-     * Get/Set Team
+     * Get or insert Team
      *
      * @param string $name
      * @param Sport $sport
      *
      * @return Team
      */
-    public function getTeam(string $name, Sport $sport): Team
+    public function getOrInsertTeam(string $name, Sport $sport): Team
     {
         $team = $this->manager
             ->getRepository(Team::class)
@@ -232,7 +249,7 @@ class ApiV1
                 'name' => $name,
                 'sport' => $sport
             ]);
-        if (is_null($team)) {
+        if (!($team instanceof Team)) {
             $team = new Team();
             $team->setName($name);
             $team->setSport($sport);
@@ -242,18 +259,18 @@ class ApiV1
     }
 
     /**
-     * Get/Set Source
+     * Get or insert Source
      *
      * @param string $name
      *
      * @return Source
      */
-    public function getSource(string $name): Source
+    public function getOrInsertSource(string $name): Source
     {
         $source = $this->manager
             ->getRepository(Source::class)
             ->findOneBy(['name' => $name]);
-        if (is_null($source)) {
+        if (!($source instanceof Source)) {
             $source = new Source();
             $source->setName($name);
             $this->manager->persist($source);
@@ -262,14 +279,14 @@ class ApiV1
     }
 
     /**
-     * Add Game
+     * Fill GameInterface
      *
      * @param GameInterface $object
      * @param GameInterface|array $data
      *
      * @return GameInterface
      */
-    public function addGame(GameInterface $object, $data): GameInterface
+    public function fillGame(GameInterface $object, $data): GameInterface
     {
         if ($data instanceof GameInterface) {
             $object->setLeague($data->getLeague());

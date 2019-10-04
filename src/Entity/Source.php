@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -56,9 +55,9 @@ class Source
     }
 
     /**
-     * @return Collection|GameBuffer[]
+     * @return ArrayCollection|GameBuffer[]
      */
-    public function getGameBuffers(): Collection
+    public function getGameBuffers(): ArrayCollection
     {
         return $this->gameBuffers;
     }
