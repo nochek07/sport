@@ -14,13 +14,20 @@ class ApiV1
     private $manager;
 
     /**
+     * @var PropertyBuilder
+     */
+    private $propertyBuilder;
+
+    /**
      * ApiV1 constructor.
      *
      * @param EntityManagerInterface $manager
+     * @param PropertyBuilder $propertyBuilder
      */
-    public function __construct(EntityManagerInterface $manager)
+    public function __construct(EntityManagerInterface $manager, PropertyBuilder $propertyBuilder)
     {
         $this->manager = $manager;
+        $this->propertyBuilder = $propertyBuilder;
     }
 
     /**
@@ -37,13 +44,51 @@ class ApiV1
         $data = json_decode($request->getContent(), true);
 
         if (isset($data['events'])) {
+
             foreach ($data['events'] as $event) {
-                $lang = $this->getOrInsertLanguage($event['lang']);
-                $sport = $this->getOrInsertSport($event['sport']);
-                $league = $this->getOrInsertLeague($event['league'], $sport);
-                $team1 = $this->getOrInsertTeam($event['team1'], $sport);
-                $team2 = $this->getOrInsertTeam($event['team2'], $sport);
-                $source = $this->getOrInsertSource($event['source']);
+                $this->propertyBuilder->addDataIn(PropertyBuilder::LANGUAGE, $event['lang']);
+                $this->propertyBuilder->addDataIn(PropertyBuilder::SPORT, $event['sport']);
+                $this->propertyBuilder->addDataIn(PropertyBuilder::LEAGUE, [$event['league'], $event['sport']]);
+                $this->propertyBuilder->addDataIn(PropertyBuilder::TEAM, [$event['team1'], $event['sport']]);
+                $this->propertyBuilder->addDataIn(PropertyBuilder::TEAM, [$event['team2'], $event['sport']]);
+                $this->propertyBuilder->addDataIn(PropertyBuilder::SOURCE, $event['source']);
+            }
+            $this->propertyBuilder->fillingData();
+
+            foreach ($data['events'] as $event) {
+
+                $lang = $this->propertyBuilder->lookForData(PropertyBuilder::LANGUAGE, $event['lang']);
+                if (!($lang instanceof Language)) {
+                    $lang = $this->propertyBuilder->insertEntity(PropertyBuilder::LANGUAGE, $event['lang']);
+                }
+
+                $source = $this->propertyBuilder->lookForData(PropertyBuilder::SOURCE, $event['source']);
+                if (!($source instanceof Source)) {
+                    $source = $this->propertyBuilder->insertEntity(PropertyBuilder::SOURCE, $event['source']);
+                }
+
+                $sport = $this->propertyBuilder->lookForData(PropertyBuilder::SPORT, $event['sport']);
+                if (!($sport instanceof Sport)) {
+                    $sport = $this->propertyBuilder->insertEntity(PropertyBuilder::SPORT, $event['sport']);
+                    $league = $this->propertyBuilder->insertEntity(PropertyBuilder::LEAGUE, $event['league'], $sport);
+                    $team1 = $this->propertyBuilder->insertEntity(PropertyBuilder::TEAM, $event['team1'], $sport);
+                    $team2 = $this->propertyBuilder->insertEntity(PropertyBuilder::TEAM, $event['team2'], $sport);
+                } else {
+                    $league = $this->propertyBuilder->lookForData(PropertyBuilder::LEAGUE, $event['league'], $sport);
+                    if (!($league instanceof League)) {
+                        $league = $this->propertyBuilder->insertEntity(PropertyBuilder::LEAGUE, $event['league'], $sport);
+                    }
+
+                    $team1 = $this->propertyBuilder->lookForData(PropertyBuilder::TEAM, $event['team1'], $sport);
+                    if (!($team1 instanceof Team)) {
+                        $team1 = $this->propertyBuilder->insertEntity(PropertyBuilder::TEAM, $event['team1'], $sport);
+                    }
+
+                    $team2 = $this->propertyBuilder->lookForData(PropertyBuilder::TEAM, $event['team2'], $sport);
+                    if (!($team2 instanceof Team)) {
+                        $team2 = $this->propertyBuilder->insertEntity(PropertyBuilder::TEAM, $event['team2'], $sport);
+                    }
+                }
 
                 $date = new \DateTime($event['date']);
 
@@ -111,6 +156,8 @@ class ApiV1
      * @param Request $request
      *
      * @return array
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function random(Request $request): array
     {
@@ -166,116 +213,6 @@ class ApiV1
         }
 
         return $result;
-    }
-
-    /**
-     * Get or insert Language
-     *
-     * @param string $name
-     *
-     * @return Language
-     */
-    public function getOrInsertLanguage(string $name): Language
-    {
-        $lang = $this->manager
-            ->getRepository(Language::class)
-            ->findOneBy(['name' => $name]);
-        if (!($lang instanceof Language)) {
-            $lang = new Language();
-            $lang->setName($name);
-            $this->manager->persist($lang);
-        }
-        return $lang;
-    }
-
-    /**
-     * Get or insert Sport
-     *
-     * @param string $name
-     *
-     * @return Sport
-     */
-    public function getOrInsertSport(string $name): Sport
-    {
-        $sport = $this->manager
-            ->getRepository(Sport::class)
-            ->findOneBy(['name' => $name]);
-        if (!($sport instanceof Sport)) {
-            $sport = new Sport();
-            $sport->setName($name);
-            $this->manager->persist($sport);
-        }
-        return $sport;
-    }
-
-    /**
-     * Get or insert League
-     *
-     * @param string $name
-     * @param Sport $sport
-     *
-     * @return League
-     */
-    public function getOrInsertLeague(string $name, Sport $sport): League
-    {
-        $league = $this->manager
-            ->getRepository(League::class)
-            ->findOneBy([
-                'name' => $name,
-                'sport' => $sport
-            ]);
-        if (!($league instanceof League)) {
-            $league = new League();
-            $league->setName($name);
-            $league->setSport($sport);
-            $this->manager->persist($league);
-        }
-        return $league;
-    }
-
-    /**
-     * Get or insert Team
-     *
-     * @param string $name
-     * @param Sport $sport
-     *
-     * @return Team
-     */
-    public function getOrInsertTeam(string $name, Sport $sport): Team
-    {
-        $team = $this->manager
-            ->getRepository(Team::class)
-            ->findOneBy([
-                'name' => $name,
-                'sport' => $sport
-            ]);
-        if (!($team instanceof Team)) {
-            $team = new Team();
-            $team->setName($name);
-            $team->setSport($sport);
-            $this->manager->persist($team);
-        }
-        return $team;
-    }
-
-    /**
-     * Get or insert Source
-     *
-     * @param string $name
-     *
-     * @return Source
-     */
-    public function getOrInsertSource(string $name): Source
-    {
-        $source = $this->manager
-            ->getRepository(Source::class)
-            ->findOneBy(['name' => $name]);
-        if (!($source instanceof Source)) {
-            $source = new Source();
-            $source->setName($name);
-            $this->manager->persist($source);
-        }
-        return $source;
     }
 
     /**

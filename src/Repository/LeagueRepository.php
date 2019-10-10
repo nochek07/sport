@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
-use App\Entity\League;
+use App\Entity\{League, Sport};
+use App\Utils\Util;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query\ResultSetMapping;
 
 /**
  * @method League|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +19,40 @@ class LeagueRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, League::class);
+    }
+
+    /**
+     * Find Leagues by Pairs
+     *
+     * @param array $params
+     *
+     * @return League[]
+     */
+    public function findByPair(array $params)
+    {
+        $stringParams = Util::arrayToString($params);
+
+        $sport = $this->getEntityManager()
+            ->getRepository(Sport::class);
+
+        $rsm = new ResultSetMapping();
+        $rsm->addEntityResult($this->_entityName, 'l');
+        $rsm->addFieldResult('l','id','id');
+        $rsm->addFieldResult('l','name','name');
+        $rsm->addMetaResult('l','sport_id','sport_id');
+
+        return $this->getEntityManager()
+            ->createNativeQuery("
+                SELECT l.id, l.name, l.sport_id
+                FROM                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+                  {$this->getClassMetadata()->getTableName()} l
+                LEFT JOIN {$sport->getClassMetadata()->getTableName()} s 
+                    ON s.id = l.sport_id                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                WHERE 
+                    (l.name, s.name) IN ({$stringParams})
+            ", $rsm)
+            ->getResult()
+            ;
     }
 
     // /**
