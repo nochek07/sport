@@ -2,9 +2,11 @@
 
 namespace App\Service;
 
-use App\Entity\{Game, GameBuffer, GameInterface, Language, League, Source, Sport, Team};
+use App\Entity\{Game, GameBuffer, Language, League, Source, Sport, Team};
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Process\Process;
 
 class ApiV1
 {
@@ -19,15 +21,22 @@ class ApiV1
     private $propertyBuilder;
 
     /**
+     * @var KernelInterface
+     */
+    private $kernel;
+
+    /**
      * ApiV1 constructor.
      *
      * @param EntityManagerInterface $manager
      * @param PropertyBuilder $propertyBuilder
+     * @param KernelInterface $kernel
      */
-    public function __construct(EntityManagerInterface $manager, PropertyBuilder $propertyBuilder)
+    public function __construct(EntityManagerInterface $manager, PropertyBuilder $propertyBuilder, KernelInterface $kernel)
     {
         $this->manager = $manager;
         $this->propertyBuilder = $propertyBuilder;
+        $this->kernel = $kernel;
     }
 
     /**
@@ -37,7 +46,7 @@ class ApiV1
      *
      * @return array
      *
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws \Exception
      */
     public function addGame(Request $request): array
     {
@@ -55,6 +64,8 @@ class ApiV1
             }
             $this->propertyBuilder->fillingData();
 
+
+            $ArrayForGames = [];
             foreach ($data['events'] as $event) {
 
                 $lang = $this->propertyBuilder->lookForData(PropertyBuilder::LANGUAGE, $event['lang']);
@@ -90,14 +101,12 @@ class ApiV1
                     }
                 }
 
-                $date = new \DateTime($event['date']);
-
                 $filter = [
                     'language' => $lang,
                     'league' => $league,
                     'team1' => $team1,
                     'team2' => $team2,
-                    'date' => $date,
+                    'date' => new \DateTime($event['date']),
                     'source' => $source
                 ];
 
@@ -106,42 +115,29 @@ class ApiV1
                     ->getRepository(GameBuffer::class)
                     ->findOneBy($filter);
                 if (!($gameBuffer instanceof GameBuffer)) {
-                    /**
-                     * @var GameBuffer $gameBuffer
-                     */
-                    $gameBuffer = $this->fillGame(new GameBuffer(), $filter);
-                    $gameBuffer->setSource($source);
+                    $gameBuffer = new GameBuffer();
+                    $gameBuffer->setLeague($filter['league']);
+                    $gameBuffer->setLanguage($filter['language']);
+                    $gameBuffer->setTeam1($filter['team1']);
+                    $gameBuffer->setTeam2($filter['team2']);
+                    $gameBuffer->setDate($filter['date']);
+                    $gameBuffer->setSource($filter['source']);
                     $this->manager->persist($gameBuffer);
-                }
-                $this->manager->flush();
 
-                $diff = $sport->getDiff();
-                $dateStart = clone $date;
-                $dateEnd = clone $date;
-                $dateStart->modify("- {$diff} hour");
-                $dateEnd->modify("+ {$diff} hour");
-
-                /**
-                 * @var Game $findGame
-                 */
-                $findGame = $this->manager
-                    ->getRepository(Game::class)
-                    ->findByBuffer($gameBuffer, $dateStart, $dateEnd);
-                if (!($findGame instanceof Game)) {
-                    /**
-                     * @var Game $game
-                     */
-                    $game = $this->fillGame(new Game(), $filter);
-                    $this->manager->persist($game);
-                    $gameBuffer->setGame($game);
-                } else {
-                    $difference = $date->diff($findGame->getDate());
-                    if ($difference->invert == 1) {
-                        $findGame->setDate($date);
-                    }
-                    $gameBuffer->setGame($findGame);
+                    $ArrayForGames[] = $gameBuffer;
                 }
+            }
+            if (sizeof($ArrayForGames) > 0) {
                 $this->manager->flush();
+                $ArrayForGamesID = [];
+                foreach ($ArrayForGames as $gameBuffer) {
+                    $ArrayForGamesID[] = $gameBuffer->getId();
+                }
+
+                $serializer = base64_encode(serialize($ArrayForGames));
+                $process = Process::fromShellCommandline('bin/console app:sport:add "' . $serializer . '" > /dev/null 2>&1 &');
+                $process->setWorkingDirectory($this->kernel->getProjectDir());
+                $process->run();
             }
 
             return ['success' => 1];
@@ -213,31 +209,5 @@ class ApiV1
         }
 
         return $result;
-    }
-
-    /**
-     * Fill GameInterface
-     *
-     * @param GameInterface $object
-     * @param GameInterface|array $data
-     *
-     * @return GameInterface
-     */
-    public function fillGame(GameInterface $object, $data): GameInterface
-    {
-        if ($data instanceof GameInterface) {
-            $object->setLeague($data->getLeague());
-            $object->setLanguage($data->getLanguage());
-            $object->setTeam1($data->getTeam1());
-            $object->setTeam2($data->getTeam2());
-            $object->setDate($data->getDate());
-        } else {
-            $object->setLeague($data['league']);
-            $object->setLanguage($data['language']);
-            $object->setTeam1($data['team1']);
-            $object->setTeam2($data['team2']);
-            $object->setDate($data['date']);
-        }
-        return $object;
     }
 }

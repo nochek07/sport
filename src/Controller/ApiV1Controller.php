@@ -36,6 +36,8 @@ class ApiV1Controller extends AbstractController
      * @param ApiV1 $api
      *
      * @return JsonResponse
+     *
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function random(Request $request, ApiV1 $api)
     {

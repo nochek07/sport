@@ -7,6 +7,12 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Table(
  *     name="game_buffer",
+ *     uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="search_idx",
+ *              columns={"league_id", "team1_id", "team2_id", "date", "language_id", "source_id"}
+ *          )
+ *     },
  *     indexes={
  *          @ORM\Index(name="search_date_idx", columns={"date"})
  *     }
