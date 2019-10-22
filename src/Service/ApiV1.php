@@ -32,8 +32,11 @@ class ApiV1
      * @param PropertyBuilder $propertyBuilder
      * @param KernelInterface $kernel
      */
-    public function __construct(EntityManagerInterface $manager, PropertyBuilder $propertyBuilder, KernelInterface $kernel)
-    {
+    public function __construct(
+        EntityManagerInterface $manager,
+        PropertyBuilder $propertyBuilder,
+        KernelInterface $kernel
+    ) {
         $this->manager = $manager;
         $this->propertyBuilder = $propertyBuilder;
         $this->kernel = $kernel;
