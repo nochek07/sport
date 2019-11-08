@@ -2,25 +2,10 @@
 
 namespace App\Utils\Property;
 
-use Doctrine\ORM\EntityManagerInterface;
+use App\DTO\GameBufferDTO;
 
-class Source implements PropertyInterface
+class Source extends AbstractProperty
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $manager;
-
-    /**
-     * Sport constructor.
-     *
-     * @param EntityManagerInterface $manager
-     */
-    public function __construct(EntityManagerInterface $manager)
-    {
-        $this->manager = $manager;
-    }
-
     /**
      * Find by criteria
      *
@@ -30,7 +15,7 @@ class Source implements PropertyInterface
      */
     public function findBy(array $criteria)
     {
-        return $this->manager
+        return $this->getManager()
                 ->getRepository(\App\Entity\Source::class)
                 ->findBy(['name' => $criteria]) ?? [];
     }
@@ -39,27 +24,29 @@ class Source implements PropertyInterface
      * Is equal
      *
      * @param \App\Entity\Source $entity
-     * @param mixed ...$params
+     * @param GameBufferDTO $dto
+     * @param \App\Entity\Sport $sport
      *
      * @return bool
      */
-    public function isEq($entity, ...$params): bool
+    public function isEq($entity, GameBufferDTO $dto, $sport = null): bool
     {
-        return (strcasecmp($entity->getName(), trim($params[0])) == 0);
+        return (strcasecmp($entity->getName(), $dto->getSource()) == 0);
     }
 
     /**
      * Insert Entity
      *
-     * @param mixed ...$params
+     * @param GameBufferDTO $dto
+     * @param \App\Entity\Sport|null $sport
      *
      * @return \App\Entity\Source
      */
-    public function insert(...$params)
+    public function insert(GameBufferDTO $dto, $sport = null)
     {
         $source = new \App\Entity\Source();
-        $source->setName($params[0]);
-        $this->manager->persist($source);
+        $source->setName($dto->getSource());
+        $this->getManager()->persist($source);
         return $source;
     }
 }

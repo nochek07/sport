@@ -2,6 +2,8 @@
 
 namespace App\Utils\Property;
 
+use App\DTO\GameBufferDTO;
+
 interface PropertyInterface
 {
     /**
@@ -17,17 +19,19 @@ interface PropertyInterface
      * Is equal
      *
      * @param mixed $entity
-     * @param mixed ...$params
+     * @param GameBufferDTO $dto
+     * @param \App\Entity\Sport|null $sport
      * @return bool
      */
-    public function isEq($entity, ...$params): bool;
+    public function isEq($entity, GameBufferDTO $dto, $sport = null): bool;
 
     /**
      * Insert Entity
      *
-     * @param mixed ...$params
+     * @param GameBufferDTO $dto
+     * @param \App\Entity\Sport|null $sport
      *
      * @return mixed
      */
-    public function insert(...$params);
+    public function insert(GameBufferDTO $dto, $sport = null);
 }

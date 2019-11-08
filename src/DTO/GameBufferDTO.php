@@ -14,6 +14,11 @@ class GameBufferDTO
     /**
      * @Assert\NotBlank
      */
+    private $sport;
+
+    /**
+     * @Assert\NotBlank
+     */
     private $team1;
 
     /**
@@ -45,8 +50,13 @@ class GameBufferDTO
     public function __construct(array $params)
     {
         $this->setLeague($params['league'] ?? '');
+        $this->setSport($params['sport'] ?? '');
         $this->setTeam1($params['team1'] ?? '');
-        $this->setTeam2($params['team2'] ?? '');
+        if($params['team1'] == $params['team2']) {
+            $this->setTeam2('');
+        } else {
+            $this->setTeam2($params['team2'] ?? '');
+        }
         $this->setLeague($params['league'] ?? '');
         $this->setLanguage($params['lang'] ?? '');
         $this->setSource($params['source'] ?? '');
@@ -67,6 +77,18 @@ class GameBufferDTO
     public function setLeague(string $league)
     {
         $this->league = trim($league);
+
+        return $this;
+    }
+
+    public function getSport()
+    {
+        return $this->sport;
+    }
+
+    public function setSport(string $sport)
+    {
+        $this->sport = trim($sport);
 
         return $this;
     }
