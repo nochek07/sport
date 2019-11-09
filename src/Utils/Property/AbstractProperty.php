@@ -32,28 +32,44 @@ abstract class AbstractProperty implements PropertyInterface, OutDataInterface
         $this->manager = $manager;
     }
 
+    /**
+     * Get Entity Manager
+     *
+     * @return EntityManagerInterface
+     */
     public function getManager()
     {
         return $this->manager;
     }
 
+    /**
+     * Get Out Data
+     *
+     * @return array
+     */
     public function getOutData()
     {
         return $this->outData;
     }
+
+    /**
+     * {@inheritDoc}
+     */
     public function addOutData(array $data)
     {
         $this->outData = array_merge($this->outData, $data);
     }
 
     /**
-     * @param array|string $data
+     * {@inheritDoc}
      */
-    public function addInData($data)
-    {
+    public function addInData($data) {
         array_push($this->inData, $data);
     }
 
+    /**
+     * Filling Out Data
+     */
     public function filingOutData()
     {
         $this->outData = $this->findBy($this->inData);
@@ -64,6 +80,7 @@ abstract class AbstractProperty implements PropertyInterface, OutDataInterface
      *
      * @param GameBufferDTO $dto
      * @param \App\Entity\Sport|null $sport
+     *
      * @return mixed|null
      */
     public function lookForOutData(GameBufferDTO $dto, $sport = null)
@@ -76,9 +93,18 @@ abstract class AbstractProperty implements PropertyInterface, OutDataInterface
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     abstract public function findBy(array $criteria);
 
+    /**
+     * {@inheritDoc}
+     */
     abstract public function isEq($entity, GameBufferDTO $dto, $sport = null): bool;
 
+    /**
+     * {@inheritDoc}
+     */
     abstract public function insert(GameBufferDTO $dto, $sport = null);
 }

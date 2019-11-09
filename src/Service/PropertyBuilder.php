@@ -54,6 +54,8 @@ class PropertyBuilder
     }
 
     /**
+     * Filling Out Data
+     *
      * @param GameBufferDTO[] $dtoArray
      */
     public function fillingData($dtoArray)
@@ -65,7 +67,6 @@ class PropertyBuilder
         $this->propertyTeam2 = new Team2($this->manager);
         $this->propertySource = new Source($this->manager);
 
-        // ToDo
         foreach ($dtoArray as $dto) {
             $this->propertyLanguage->addInData($dto->getLanguage());
             $this->propertySport->addInData($dto->getSport());

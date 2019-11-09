@@ -58,8 +58,6 @@ class ApiV1
      * @param Request $request
      *
      * @return array
-     *
-     * @throws \Exception
      */
     public function addGame(Request $request): array
     {
@@ -181,9 +179,10 @@ class ApiV1
      * Filling And Validate DTO Game Buffer
      *
      * @param array $events
+     *
      * @return GameBufferDTO[]
      */
-    public function fillingAndValidateDTO(array $events)
+    private function fillingAndValidateDTO(array $events)
     {
         $result = [];
         foreach ($events as $event) {

@@ -8,6 +8,7 @@ class Util
      * Array to string for query
      *
      * @param array $params
+     *
      * @return string
      */
     static public function arrayToString(array $params): string
