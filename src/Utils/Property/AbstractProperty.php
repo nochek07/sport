@@ -23,7 +23,7 @@ abstract class AbstractProperty implements PropertyInterface, OutDataInterface
     private $inData = [];
 
     /**
-     * Sport constructor.
+     * PropSport constructor.
      *
      * @param EntityManagerInterface $manager
      */

@@ -4,13 +4,13 @@ namespace App\Utils\Property;
 
 use App\DTO\GameBufferDTO;
 
-class Team2 extends AbstractTeam
+class PropTeam1 extends AbstractTeam
 {
     /**
      * {@inheritDoc}
      */
     public function getValueOfTeam(GameBufferDTO $dto): string
     {
-        return $dto->getTeam2();
+        return $dto->getTeam1();
     }
 }

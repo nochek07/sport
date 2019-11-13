@@ -56,7 +56,7 @@ class TeamRepository extends ServiceEntityRepository
     }
 
     // /**
-    //  * @return Team1[] Returns an array of Team1 objects
+    //  * @return Team[] Returns an array of Team objects
     //  */
     /*
     public function findByExampleField($value)
@@ -73,7 +73,7 @@ class TeamRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Team1
+    public function findOneBySomeField($value): ?Team
     {
         return $this->createQueryBuilder('t')
             ->andWhere('t.exampleField = :val')

@@ -4,7 +4,7 @@ namespace App\Utils\Property;
 
 use App\DTO\GameBufferDTO;
 
-class Language extends AbstractProperty
+class PropLanguage extends AbstractProperty
 {
     /**
      * Find by criteria

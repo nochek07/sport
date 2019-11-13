@@ -4,26 +4,26 @@ namespace App\Utils\Property;
 
 use App\DTO\GameBufferDTO;
 
-class League extends AbstractProperty
+class PropSource extends AbstractProperty
 {
     /**
      * Find by criteria
      *
      * @param array $criteria
      *
-     * @return \App\Entity\Team[]
+     * @return \App\Entity\Source[]
      */
     public function findBy(array $criteria)
     {
         return $this->getManager()
-                ->getRepository(\App\Entity\League::class)
-                ->findByPair($criteria) ?? [];
+                ->getRepository(\App\Entity\Source::class)
+                ->findBy(['name' => $criteria]) ?? [];
     }
 
     /**
      * Is equal
      *
-     * @param \App\Entity\League $entity
+     * @param \App\Entity\Source $entity
      * @param GameBufferDTO $dto
      * @param \App\Entity\Sport $sport
      *
@@ -31,8 +31,7 @@ class League extends AbstractProperty
      */
     public function isEq($entity, GameBufferDTO $dto, $sport = null): bool
     {
-        return (strcasecmp($entity->getName(), $dto->getLeague()) == 0
-            && $entity->getSport() == $sport);
+        return (strcasecmp($entity->getName(), $dto->getSource()) == 0);
     }
 
     /**
@@ -41,14 +40,13 @@ class League extends AbstractProperty
      * @param GameBufferDTO $dto
      * @param \App\Entity\Sport|null $sport
      *
-     * @return \App\Entity\League
+     * @return \App\Entity\Source
      */
     public function insert(GameBufferDTO $dto, $sport = null)
     {
-        $league = new \App\Entity\League();
-        $league->setName($dto->getLeague());
-        $league->setSport($sport);
-        $this->getManager()->persist($league);
-        return $league;
+        $source = new \App\Entity\Source();
+        $source->setName($dto->getSource());
+        $this->getManager()->persist($source);
+        return $source;
     }
 }

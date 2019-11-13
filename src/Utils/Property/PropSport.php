@@ -4,7 +4,7 @@ namespace App\Utils\Property;
 
 use App\DTO\GameBufferDTO;
 
-class Sport extends AbstractProperty
+class PropSport extends AbstractProperty
 {
     /**
      * Find by criteria

@@ -3,38 +3,38 @@
 namespace App\Service;
 
 use App\DTO\GameBufferDTO;
-use App\Utils\Property\{League, Language, Source, Sport, Team1, Team2};
+use App\Utils\Property\{PropLeague, PropLanguage, PropSource, PropSport, PropTeam1, PropTeam2};
 use Doctrine\ORM\EntityManagerInterface;
 
 class PropertyBuilder
 {
     /**
-     * @var Language
+     * @var PropLanguage
      */
     private $propertyLanguage;
 
     /**
-     * @var Sport
+     * @var PropSport
      */
     private $propertySport;
 
     /**
-     * @var League
+     * @var PropLeague
      */
     private $propertyLeague;
 
     /**
-     * @var Team1
+     * @var PropTeam1
      */
     private $propertyTeam1;
 
     /**
-     * @var Team2
+     * @var PropTeam2
      */
     private $propertyTeam2;
 
     /**
-     * @var Source
+     * @var PropSource
      */
     private $propertySource;
 
@@ -60,12 +60,12 @@ class PropertyBuilder
      */
     public function fillingData($dtoArray)
     {
-        $this->propertyLanguage = new Language($this->manager);
-        $this->propertySport = new Sport($this->manager);
-        $this->propertyLeague = new League($this->manager);
-        $this->propertyTeam1 = new Team1($this->manager);
-        $this->propertyTeam2 = new Team2($this->manager);
-        $this->propertySource = new Source($this->manager);
+        $this->propertyLanguage = new PropLanguage($this->manager);
+        $this->propertySport = new PropSport($this->manager);
+        $this->propertyLeague = new PropLeague($this->manager);
+        $this->propertyTeam1 = new PropTeam1($this->manager);
+        $this->propertyTeam2 = new PropTeam2($this->manager);
+        $this->propertySource = new PropSource($this->manager);
 
         foreach ($dtoArray as $dto) {
             $this->propertyLanguage->addInData($dto->getLanguage());
