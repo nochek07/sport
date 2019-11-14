@@ -6,8 +6,6 @@ use App\DTO\GameBufferDTO;
 use App\Entity\{Game, GameBuffer};
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Process\Process;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ApiV1
@@ -23,9 +21,9 @@ class ApiV1
     private $propertyBuilder;
 
     /**
-     * @var KernelInterface
+     * @var BackgroundProcess
      */
-    private $kernel;
+    private $process;
 
     /**
      * @var ValidatorInterface
@@ -37,18 +35,18 @@ class ApiV1
      *
      * @param EntityManagerInterface $manager
      * @param PropertyBuilder $propertyBuilder
-     * @param KernelInterface $kernel
+     * @param BackgroundProcess $process
      * @param ValidatorInterface $validator
      */
     public function __construct(
         EntityManagerInterface $manager,
         PropertyBuilder $propertyBuilder,
-        KernelInterface $kernel,
+        BackgroundProcess $process,
         ValidatorInterface $validator
     ) {
         $this->manager = $manager;
         $this->propertyBuilder = $propertyBuilder;
-        $this->kernel = $kernel;
+        $this->process = $process;
         $this->validator = $validator;
     }
 
@@ -96,11 +94,7 @@ class ApiV1
                     foreach ($ArrayForGames as $gameBuffer) {
                         $ArrayForGamesID[] = $gameBuffer->getId();
                     }
-
-                    $serializer = base64_encode(serialize($ArrayForGames));
-                    $process = Process::fromShellCommandline('bin/console app:sport:add "' . $serializer . '" > /dev/null 2>&1 &');
-                    $process->setWorkingDirectory($this->kernel->getProjectDir());
-                    $process->run();
+                    $this->process->runProcess($ArrayForGames);
                 }
 
                 return ['success' => 1];
