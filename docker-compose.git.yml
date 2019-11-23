@@ -33,6 +33,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: test
     volumes:
+      - ./docker/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
       - persistent:/var/lib/mysql
     container_name: mysql
     networks:
