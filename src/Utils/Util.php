@@ -26,6 +26,6 @@ class Util
             }
             $carry .= ($carry ? ',' : '') . $item;
             return $carry;
-        });
+        }) ?? '';
     }
 }

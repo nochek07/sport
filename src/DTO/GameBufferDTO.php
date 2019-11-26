@@ -49,20 +49,23 @@ class GameBufferDTO
      */
     public function __construct(array $params)
     {
+        $team1 = $params['team1'] ?? '';
+        $team2 = $params['team2'] ?? '';
         $this->setLeague($params['league'] ?? '');
         $this->setSport($params['sport'] ?? '');
-        $this->setTeam1($params['team1'] ?? '');
-        if($params['team1'] == $params['team2']) {
-            $this->setTeam2('');
-        } else {
-            $this->setTeam2($params['team2'] ?? '');
+        $this->setTeam1($team1);
+        if (strcasecmp(trim($team1), trim($team2)) == 0) {
+            $team2 = '';
         }
+        $this->setTeam2($team2);
         $this->setLeague($params['league'] ?? '');
         $this->setLanguage($params['lang'] ?? '');
         $this->setSource($params['source'] ?? '');
 
+        $dateString = trim($params['date'] ?? '-');
+        $dateString = empty($dateString) ? '-' : $dateString;
         try {
-            $date = new \DateTime($params['date'] ?? '-');
+            $date = new \DateTime($dateString ?? '-');
             $this->setDate($date);
         } catch (\Exception $e) {
         }

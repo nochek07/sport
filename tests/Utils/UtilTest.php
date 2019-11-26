@@ -7,8 +7,28 @@ use PHPUnit\Framework\TestCase;
 
 class UtilTest extends TestCase
 {
-    public function testArrayToString()
+    /**
+     * @dataProvider additionProvider
+     *
+     * @param string $expected
+     * @param array $data
+     */
+    public function testArrayToString($expected, $data)
     {
-        $this->assertSame('(1,2),(3,4)', Util::arrayToString([[1,2],[3,4]]));
+        $this->assertSame($expected, Util::arrayToString($data));
+    }
+
+    public function additionProvider()
+    {
+        return [
+            ["(1,2),(0,4)", [[1,2],[0,4]]],
+            ["('1',2),(3,4)", [['1',2],[3,4]]],
+            ["('1',2),(3,'4')", [['1',2],[3,'4']]],
+            ["('1','2'),('3','4')", [['1','2'],['3','4']]],
+            ["1,2,0,4", [1,2,0,4]],
+            ["'1',2,3,4", ['1',2,3,4]],
+            ["'1','2','3','4'", ['1','2','3','4']],
+            ['', []]
+        ];
     }
 }
