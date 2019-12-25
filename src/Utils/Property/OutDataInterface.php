@@ -16,9 +16,9 @@ interface OutDataInterface
     /**
      * Add in array InData
      *
-     * @param mixed $data
+     * @param mixed $value
      *
      * @return mixed
      */
-    public function addInData($data);
+    public function addInData($value);
 }

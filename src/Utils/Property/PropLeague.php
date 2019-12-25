@@ -32,7 +32,7 @@ class PropLeague extends AbstractProperty
     public function isEq($entity, GameBufferDTO $dto, $sport = null): bool
     {
         return (strcasecmp($entity->getName(), $dto->getLeague()) == 0
-            && $entity->getSport() == $sport);
+            && !is_null($sport) && $entity->getSport() == $sport);
     }
 
     /**

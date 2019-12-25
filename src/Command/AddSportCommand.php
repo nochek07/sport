@@ -23,7 +23,6 @@ class AddSportCommand extends Command
     public function __construct(EntityManagerInterface $manager)
     {
         $this->manager = $manager;
-
         parent::__construct();
     }
 
@@ -51,7 +50,8 @@ class AddSportCommand extends Command
              * @var GameBuffer $gameBuffer
              */
             foreach ($findGameBufer as $gameBuffer) {
-                $diff = $gameBuffer->getLeague()->getSport()->getDiff();
+                $sport = $gameBuffer->getLeague()->getSport();
+                $diff = $sport->getDiff();
                 /**
                  * @var \DateTime $date
                  */

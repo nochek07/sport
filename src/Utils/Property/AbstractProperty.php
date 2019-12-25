@@ -63,8 +63,8 @@ abstract class AbstractProperty implements PropertyInterface, OutDataInterface
     /**
      * {@inheritDoc}
      */
-    public function addInData($data) {
-        array_push($this->inData, $data);
+    public function addInData($value) {
+        array_push($this->inData, $value);
     }
 
     /**
