@@ -102,6 +102,9 @@
     "ocramius/proxy-manager": {
         "version": "2.2.3"
     },
+    "php": {
+        "version": "7.2"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
@@ -122,6 +125,9 @@
         "files": [
             "config/packages/sensio_framework_extra.yaml"
         ]
+    },
+    "symfony/browser-kit": {
+        "version": "v4.3.11"
     },
     "symfony/cache": {
         "version": "v3.4.30"
@@ -154,8 +160,14 @@
     "symfony/doctrine-bridge": {
         "version": "v4.3.3"
     },
+    "symfony/dom-crawler": {
+        "version": "v4.3.11"
+    },
     "symfony/dotenv": {
         "version": "v3.4.30"
+    },
+    "symfony/error-handler": {
+        "version": "v4.4.5"
     },
     "symfony/event-dispatcher": {
         "version": "v3.4.30"
@@ -267,7 +279,7 @@
         "version": "v1.12.0"
     },
     "symfony/process": {
-        "version": "v3.4.30"
+        "version": "v4.4.5"
     },
     "symfony/profiler-pack": {
         "version": "v1.0.4"
@@ -345,15 +357,6 @@
             "config/packages/test/web_profiler.yaml",
             "config/routes/dev/web_profiler.yaml"
         ]
-    },
-    "symfony/web-server-bundle": {
-        "version": "3.3",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "3.3",
-            "ref": "dae9b39fd6717970be7601101ce5aa960bf53d9a"
-        }
     },
     "symfony/yaml": {
         "version": "v3.4.30"
