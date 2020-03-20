@@ -16,6 +16,10 @@ use Doctrine\ORM\Query\ResultSetMapping;
  */
 class TeamRepository extends ServiceEntityRepository
 {
+    /**
+     * TeamRepository constructor.
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Team::class);
@@ -51,8 +55,7 @@ class TeamRepository extends ServiceEntityRepository
                 WHERE 
                     (t.name, s.name) IN ({$stringParams})
             ", $rsm)
-            ->getResult()
-        ;
+            ->getResult();
     }
 
     // /**

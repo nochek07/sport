@@ -66,7 +66,7 @@ class ApiV1
             if (sizeof($dtoArray) > 0) {
                 $this->propertyBuilder->fillingData($dtoArray);
 
-                $ArrayForGames = [];
+                $arrayForGames = [];
                 foreach ($dtoArray as $dto) {
                     $filter = $this->propertyBuilder->getFilterData($dto);
 
@@ -84,17 +84,17 @@ class ApiV1
                         $gameBuffer->setSource($filter['source']);
                         $this->manager->persist($gameBuffer);
 
-                        $ArrayForGames[] = $gameBuffer;
+                        $arrayForGames[] = $gameBuffer;
                     }
                 }
 
-                if (sizeof($ArrayForGames) > 0) {
+                if (sizeof($arrayForGames) > 0) {
                     $this->manager->flush();
-                    $ArrayForGamesID = [];
-                    foreach ($ArrayForGames as $gameBuffer) {
-                        $ArrayForGamesID[] = $gameBuffer->getId();
+                    $arrayForGamesID = [];
+                    foreach ($arrayForGames as $gameBuffer) {
+                        $arrayForGamesID[] = $gameBuffer->getId();
                     }
-                    $this->process->runProcess($ArrayForGames);
+                    $this->process->runProcess($arrayForGames);
                 }
 
                 return ['success' => 1];

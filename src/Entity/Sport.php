@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Sport
+ *
  * @ORM\Table(
  *     indexes={
  *          @ORM\Index(name="search_name_idx", columns={"name"})
@@ -42,6 +44,9 @@ class Sport
      */
     private $diff = 0;
 
+    /**
+     * Sport constructor.
+     */
     public function __construct()
     {
         $this->teams = new ArrayCollection();
@@ -61,7 +66,6 @@ class Sport
     public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -79,7 +83,6 @@ class Sport
             $this->teams[] = $team;
             $team->setSport($this);
         }
-
         return $this;
     }
 
@@ -92,7 +95,6 @@ class Sport
                 $team->setSport(null);
             }
         }
-
         return $this;
     }
 
@@ -110,7 +112,6 @@ class Sport
             $this->leagues[] = $league;
             $league->setSport($this);
         }
-
         return $this;
     }
 
@@ -123,7 +124,6 @@ class Sport
                 $league->setSport(null);
             }
         }
-
         return $this;
     }
 
@@ -135,7 +135,6 @@ class Sport
     public function setDiff(?int $diff): self
     {
         $this->diff = $diff;
-
         return $this;
     }
 }

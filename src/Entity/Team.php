@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Team
+ *
  * @ORM\Table(
  *     indexes={
  *          @ORM\Index(name="search_name_idx", columns={"name"})
@@ -29,7 +31,6 @@ class Team
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Sport", inversedBy="teams")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $sport;
 
@@ -53,6 +54,9 @@ class Team
      */
     private $gameBuffers2;
 
+    /**
+     * Team constructor.
+     */
     public function __construct()
     {
         $this->games1 = new ArrayCollection();
@@ -74,7 +78,6 @@ class Team
     public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -86,7 +89,6 @@ class Team
     public function setSport(?Sport $sport): self
     {
         $this->sport = $sport;
-
         return $this;
     }
 
@@ -104,7 +106,6 @@ class Team
             $this->games1[] = $game;
             $game->setTeam1($this);
         }
-
         return $this;
     }
 
@@ -117,7 +118,6 @@ class Team
                 $game->setTeam1(null);
             }
         }
-
         return $this;
     }
 
@@ -135,7 +135,6 @@ class Team
             $this->games2[] = $games2;
             $games2->setTeam2($this);
         }
-
         return $this;
     }
 
@@ -148,7 +147,6 @@ class Team
                 $games2->setTeam2(null);
             }
         }
-
         return $this;
     }
 
@@ -166,7 +164,6 @@ class Team
             $this->gameBuffers1[] = $gameBuffer;
             $gameBuffer->setTeam1($this);
         }
-
         return $this;
     }
 
@@ -179,7 +176,6 @@ class Team
                 $gameBuffer->setTeam1(null);
             }
         }
-
         return $this;
     }
 
@@ -197,7 +193,6 @@ class Team
             $this->gameBuffers2[] = $gameBuffer;
             $gameBuffer->setTeam2($this);
         }
-
         return $this;
     }
 
@@ -210,7 +205,6 @@ class Team
                 $gameBuffer->setTeam2(null);
             }
         }
-
         return $this;
     }
 }

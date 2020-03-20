@@ -68,9 +68,9 @@ class GameBufferDTO
             $date = new \DateTime($dateString ?? '-');
             $this->setDate($date);
         } catch (\Exception $e) {
+            $this->setDate(null);
         }
     }
-
 
     public function getLeague()
     {
@@ -80,7 +80,6 @@ class GameBufferDTO
     public function setLeague(string $league)
     {
         $this->league = trim($league);
-
         return $this;
     }
 
@@ -92,7 +91,6 @@ class GameBufferDTO
     public function setSport(string $sport)
     {
         $this->sport = trim($sport);
-
         return $this;
     }
 
@@ -104,7 +102,6 @@ class GameBufferDTO
     public function setTeam1(string $team1)
     {
         $this->team1 = trim($team1);
-
         return $this;
     }
 
@@ -116,7 +113,6 @@ class GameBufferDTO
     public function setTeam2(string $team2)
     {
         $this->team2 = trim($team2);
-
         return $this;
     }
 
@@ -128,7 +124,6 @@ class GameBufferDTO
     public function setDate(\DateTimeInterface $date)
     {
         $this->date = $date;
-
         return $this;
     }
 
@@ -140,7 +135,6 @@ class GameBufferDTO
     public function setLanguage(string $language)
     {
         $this->language = trim($language);
-
         return $this;
     }
 
@@ -152,7 +146,6 @@ class GameBufferDTO
     public function setSource(string $source)
     {
         $this->source = trim($source);
-
         return $this;
     }
 }

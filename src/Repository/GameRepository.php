@@ -14,6 +14,10 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  */
 class GameRepository extends ServiceEntityRepository
 {
+    /**
+     * GameRepository constructor.
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Game::class);

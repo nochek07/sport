@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Source
+ *
  * @ORM\Table(
  *     indexes={
  *          @ORM\Index(name="search_name_idx", columns={"name"})
@@ -32,6 +34,9 @@ class Source
      */
     private $gameBuffers;
 
+    /**
+     * Source constructor.
+     */
     public function __construct()
     {
         $this->gameBuffers = new ArrayCollection();
@@ -50,7 +55,6 @@ class Source
     public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -68,7 +72,6 @@ class Source
             $this->gameBuffers[] = $gameBuffer;
             $gameBuffer->setSource($this);
         }
-
         return $this;
     }
 
@@ -81,7 +84,6 @@ class Source
                 $gameBuffer->setSource(null);
             }
         }
-
         return $this;
     }
 }

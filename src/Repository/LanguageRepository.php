@@ -14,6 +14,10 @@ use Doctrine\Common\Persistence\ManagerRegistry;
  */
 class LanguageRepository extends ServiceEntityRepository
 {
+    /**
+     * LanguageRepository constructor.
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Language::class);

@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Language
+ *
  * @ORM\Table(
  *     indexes={
  *          @ORM\Index(name="search_name_idx", columns={"name"})
@@ -37,6 +39,9 @@ class Language
      */
     private $gameBuffers;
 
+    /**
+     * Language constructor.
+     */
     public function __construct()
     {
         $this->games = new ArrayCollection();
@@ -56,7 +61,6 @@ class Language
     public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -74,7 +78,6 @@ class Language
             $this->games[] = $game;
             $game->setLanguage($this);
         }
-
         return $this;
     }
 
@@ -87,7 +90,6 @@ class Language
                 $game->setLanguage(null);
             }
         }
-
         return $this;
     }
 
@@ -105,7 +107,6 @@ class Language
             $this->gameBuffers[] = $gameBuffer;
             $gameBuffer->setLanguage($this);
         }
-
         return $this;
     }
 

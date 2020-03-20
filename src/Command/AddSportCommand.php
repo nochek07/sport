@@ -15,6 +15,8 @@ class AddSportCommand extends Command
      */
     private $manager;
 
+    protected static $defaultName = 'app:sport:add';
+
     /**
      * AddSportCommand constructor.
      *
@@ -25,8 +27,6 @@ class AddSportCommand extends Command
         $this->manager = $manager;
         parent::__construct();
     }
-
-    protected static $defaultName = 'app:sport:add';
 
     protected function configure()
     {
@@ -39,17 +39,17 @@ class AddSportCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $ArrayForGamesID = unserialize(base64_decode($input->getArgument('serialiseObject')));
-        if (is_array($ArrayForGamesID)) {
+        $arrayForGamesID = unserialize(base64_decode($input->getArgument('serialiseObject')));
+        if (is_array($arrayForGamesID)) {
 
-            $findGameBufer = $this->manager
+            $foundGameBuffers = $this->manager
                 ->getRepository(GameBuffer::class)
-                ->findBy(['id' => $ArrayForGamesID]);
+                ->findBy(['id' => $arrayForGamesID]);
 
             /**
              * @var GameBuffer $gameBuffer
              */
-            foreach ($findGameBufer as $gameBuffer) {
+            foreach ($foundGameBuffers as $gameBuffer) {
                 $sport = $gameBuffer->getLeague()->getSport();
                 $diff = $sport->getDiff();
                 /**
@@ -63,12 +63,12 @@ class AddSportCommand extends Command
                 $dateEnd->modify("+ {$diff} hour");
 
                 /**
-                 * @var Game $findGame
+                 * @var Game $foundGame
                  */
-                $findGame = $this->manager
+                $foundGame = $this->manager
                     ->getRepository(Game::class)
                     ->findByBuffer($gameBuffer, $dateStart, $dateEnd);
-                if (!($findGame instanceof Game)) {
+                if (!($foundGame instanceof Game)) {
                     $game = new Game();
                     $game->setLeague($gameBuffer->getLeague());
                     $game->setLanguage($gameBuffer->getLanguage());
@@ -78,11 +78,11 @@ class AddSportCommand extends Command
                     $this->manager->persist($game);
                     $gameBuffer->setGame($game);
                 } else {
-                    $difference = $date->diff($findGame->getDate());
+                    $difference = $date->diff($foundGame->getDate());
                     if ($difference->invert == 1) {
-                        $findGame->setDate($date);
+                        $foundGame->setDate($date);
                     }
-                    $gameBuffer->setGame($findGame);
+                    $gameBuffer->setGame($foundGame);
                 }
                 $this->manager->flush();
             }

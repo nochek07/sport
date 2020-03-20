@@ -11,7 +11,7 @@ class PropLeague extends AbstractProperty
      *
      * @param array $criteria
      *
-     * @return \App\Entity\Team[]
+     * @return \App\Entity\League[]
      */
     public function findBy(array $criteria)
     {

@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Game
+ *
  * @ORM\Table(
  *     name="game",
  *     indexes={
@@ -25,19 +27,16 @@ class Game implements GameInterface
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\League", inversedBy="games")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $league;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="games1")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $team1;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="games2")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $team2;
 
@@ -56,6 +55,9 @@ class Game implements GameInterface
      */
     private $gameBuffers;
 
+    /**
+     * Game constructor.
+     */
     public function __construct()
     {
         $this->gameBuffers = new ArrayCollection();
@@ -86,7 +88,6 @@ class Game implements GameInterface
     public function setTeam1(?Team $team1): self
     {
         $this->team1 = $team1;
-
         return $this;
     }
 
@@ -98,7 +99,6 @@ class Game implements GameInterface
     public function setTeam2(?Team $team2): self
     {
         $this->team2 = $team2;
-
         return $this;
     }
 
@@ -110,7 +110,6 @@ class Game implements GameInterface
     public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
-
         return $this;
     }
 
@@ -122,7 +121,6 @@ class Game implements GameInterface
     public function setLanguage(?Language $language): self
     {
         $this->language = $language;
-
         return $this;
     }
 
@@ -140,7 +138,6 @@ class Game implements GameInterface
             $this->gameBuffers[] = $gameBuffer;
             $gameBuffer->setGame($this);
         }
-
         return $this;
     }
 
@@ -153,7 +150,6 @@ class Game implements GameInterface
                 $gameBuffer->setGame(null);
             }
         }
-
         return $this;
     }
 }

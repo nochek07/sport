@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * League
+ *
  * @ORM\Table(
  *     indexes={
  *          @ORM\Index(name="search_name_idx", columns={"name"})
@@ -29,7 +31,6 @@ class League
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Sport", inversedBy="leagues")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $sport;
 
@@ -43,6 +44,9 @@ class League
      */
     private $gameBuffers;
 
+    /**
+     * League constructor.
+     */
     public function __construct()
     {
         $this->games = new ArrayCollection();
@@ -62,7 +66,6 @@ class League
     public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -74,7 +77,6 @@ class League
     public function setSport(?Sport $sport): self
     {
         $this->sport = $sport;
-
         return $this;
     }
 
@@ -92,7 +94,6 @@ class League
             $this->games[] = $game;
             $game->setLeague($this);
         }
-
         return $this;
     }
 
@@ -105,7 +106,6 @@ class League
                 $game->setLeague(null);
             }
         }
-
         return $this;
     }
 
@@ -123,7 +123,6 @@ class League
             $this->gameBuffers[] = $gameBuffer;
             $gameBuffer->setLeague($this);
         }
-
         return $this;
     }
 

@@ -5,6 +5,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * GameBuffer
+ *
  * @ORM\Table(
  *     name="game_buffer",
  *     uniqueConstraints={
@@ -30,19 +32,16 @@ class GameBuffer implements GameInterface
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\League", inversedBy="gameBuffers")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $league;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="gameBuffers1")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $team1;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="gameBuffers2")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $team2;
 
@@ -103,7 +102,6 @@ class GameBuffer implements GameInterface
     public function setTeam2(?Team $team2): self
     {
         $this->team2 = $team2;
-
         return $this;
     }
 
@@ -115,7 +113,6 @@ class GameBuffer implements GameInterface
     public function setDate(?\DateTimeInterface $date): self
     {
         $this->date = $date;
-
         return $this;
     }
 
@@ -127,7 +124,6 @@ class GameBuffer implements GameInterface
     public function setLanguage(?Language $language): self
     {
         $this->language = $language;
-
         return $this;
     }
 
@@ -139,7 +135,6 @@ class GameBuffer implements GameInterface
     public function setSource(?Source $source): self
     {
         $this->source = $source;
-
         return $this;
     }
 
@@ -151,7 +146,6 @@ class GameBuffer implements GameInterface
     public function setGame(?Game $game): self
     {
         $this->game = $game;
-
         return $this;
     }
 }
