@@ -68,7 +68,7 @@ class GameBufferDTO
             $date = new \DateTime($dateString ?? '-');
             $this->setDate($date);
         } catch (\Exception $e) {
-            $this->setDate(null);
+            unset($e);
         }
     }
 
