@@ -49,8 +49,8 @@ class GameBufferRepository extends ServiceEntityRepository
         if (isset($filter['start'])) {
             $builder
                 ->andWhere('gb.date >= :start AND gb.date <= :end')
-                ->setParameter('start', $filter['start'])
-                ->setParameter('end', $filter['end'])
+                ->setParameter('start', new \DateTime($filter['start']))
+                ->setParameter('end', new \DateTime($filter['end']))
             ;
         }
 

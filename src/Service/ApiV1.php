@@ -138,10 +138,13 @@ class ApiV1
             ];
 
             $filter = [];
-            if (!is_null($request->query->get('source'))) {
+            $source = $request->query->get('source');
+            if (!is_null($source) && !empty($source)) {
                 $filter['source'] = $request->query->get('source');
             }
-            if (!is_null($request->query->get('start')) && !is_null($request->query->get('end'))) {
+            $start = $request->query->get('start');
+            $end = $request->query->get('end');
+            if (!is_null($start) && !is_null($end) && $this->isDate($start) && $this->isDate($end)) {
                 $filter['start'] = $request->query->get('start');
                 $filter['end'] = $request->query->get('end');
             }
@@ -188,5 +191,16 @@ class ApiV1
         }
 
         return $result;
+    }
+
+    /**
+     * Check string for date
+     *
+     * @param string $str
+     * @return bool
+     */
+    private function isDate(string $str)
+    {
+        return empty($str) ? false : is_numeric(strtotime($str));
     }
 }

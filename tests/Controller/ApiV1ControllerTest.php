@@ -86,7 +86,6 @@ class ApiV1ControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $results = json_decode($this->client->getResponse()->getContent(), true);
-        print_r($results);
         $this->assertIsArray($results);
         $this->assertLessThan(count($results), 0);
         $this->assertArrayHasKey("game", $results);
@@ -165,6 +164,19 @@ class ApiV1ControllerTest extends WebTestCase
         ];
         yield [
             ['source' => 'sportdata1.com']
+        ];
+        yield [
+            [
+                'start' => '2020-01-00 10:00:00',
+                'end' => '2020-10-01 10:00:00'
+            ]
+        ];
+        yield [
+            [
+                'source' => 'sportdata1.com',
+                'start' => '2020-01-00 10:00:00',
+                'end' => '2020-10-01 10:00:00'
+            ]
         ];
     }
 }
