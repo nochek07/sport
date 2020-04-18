@@ -57,20 +57,9 @@ class ApiV1ControllerTest extends WebTestCase
      *
      * @param $content
      */
-    public function testAddEvents($content)
+    public function testAddEventsFirst($content)
     {
-        $this->client->request(Request::METHOD_POST, '/v1/api/add', [], [],
-            ['CONTENT_TYPE' => 'application/json'],
-            $content
-        );
-
-        $this->assertResponseIsSuccessful();
-
-        $results = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertIsArray($results);
-        $this->assertArrayHasKey("success", $results);
-        $this->assertSame($results["success"], 1);
-
+        $this->addEvents($content);
         sleep(1);
     }
 
@@ -92,6 +81,43 @@ class ApiV1ControllerTest extends WebTestCase
         $this->assertArrayHasKey("buffers", $results);
         $this->assertLessThan(count($results["game"]), 0);
         $this->assertLessThan(count($results["buffers"]), 0);
+    }
+
+    /**
+     * @depends testRandom
+     */
+    public function testAddEventsSecond()
+    {
+        $content =
+            '{"events": [
+                {
+                    "lang": "русский",
+                    "sport": "Баскетбол",
+                    "league": "Суперлига 1",
+                    "team1": "Урал",
+                    "team2": "Автодор",
+                    "date": "2020-03-01 10:00:00",
+                    "source": "sportdata.com"
+                }
+            ]}';
+        $this->addEvents($content);
+    }
+
+    /**
+     * @param $content
+     */
+    public function addEvents($content)
+    {
+        $this->client->request(Request::METHOD_POST, '/v1/api/add', [], [],
+            ['CONTENT_TYPE' => 'application/json'],
+            $content
+        );
+        $this->assertResponseIsSuccessful();
+
+        $results = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertIsArray($results);
+        $this->assertArrayHasKey("success", $results);
+        $this->assertSame($results["success"], 1);
     }
 
     public function additionProvider()

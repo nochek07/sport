@@ -28,4 +28,16 @@ class Util
             return $carry;
         }) ?? '';
     }
+
+    /**
+     * Check string for date
+     *
+     * @param string $str
+     *
+     * @return bool
+     */
+    static public function isDate(string $str)
+    {
+        return empty(trim($str)) ? false : is_numeric(strtotime($str));
+    }
 }

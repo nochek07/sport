@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\DTO\GameBufferDTO;
+use App\Utils\Util;
 use App\Entity\{Game, GameBuffer};
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -138,13 +139,11 @@ class ApiV1
             ];
 
             $filter = [];
-            $source = $request->query->get('source');
-            if (!is_null($source) && !empty($source)) {
+            if (!empty($request->query->get('source') ?? '')) {
                 $filter['source'] = $request->query->get('source');
             }
-            $start = $request->query->get('start');
-            $end = $request->query->get('end');
-            if (!is_null($start) && !is_null($end) && $this->isDate($start) && $this->isDate($end)) {
+            if (Util::isDate($request->query->get('start') ?? '')
+                && Util::isDate($request->query->get('end') ?? '')) {
                 $filter['start'] = $request->query->get('start');
                 $filter['end'] = $request->query->get('end');
             }
@@ -191,16 +190,5 @@ class ApiV1
         }
 
         return $result;
-    }
-
-    /**
-     * Check string for date
-     *
-     * @param string $str
-     * @return bool
-     */
-    private function isDate(string $str)
-    {
-        return empty($str) ? false : is_numeric(strtotime($str));
     }
 }

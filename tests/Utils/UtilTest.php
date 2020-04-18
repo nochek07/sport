@@ -18,6 +18,15 @@ class UtilTest extends TestCase
         $this->assertSame($expected, Util::arrayToString($data));
     }
 
+    public function testIsDate()
+    {
+        $this->assertFalse(Util::isDate(''));
+        $this->assertFalse(Util::isDate(' '));
+        $this->assertFalse(Util::isDate(' test '));
+        $this->assertTrue(Util::isDate('2020-02-01 10:00:00'));
+        $this->assertTrue(Util::isDate('2020-02-01'));
+    }
+
     public function additionProvider()
     {
         return [
