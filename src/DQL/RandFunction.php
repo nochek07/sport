@@ -2,8 +2,8 @@
 
 namespace App\DQL;
 
-use Doctrine\ORM\Query\{Lexer, Parser, SqlWalker};
 use Doctrine\ORM\Query\AST\Functions\FunctionNode;
+use Doctrine\ORM\Query\{Lexer, Parser, SqlWalker};
 
 class RandFunction extends FunctionNode
 {

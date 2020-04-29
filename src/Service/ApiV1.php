@@ -3,8 +3,8 @@
 namespace App\Service;
 
 use App\DTO\GameBufferDTO;
-use App\Utils\Util;
 use App\Entity\{Game, GameBuffer};
+use App\Utils\Util;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;

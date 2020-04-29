@@ -2,9 +2,9 @@
 
 namespace App\Tests\Utils\Property;
 
-use App\Utils\Property\PropSport;
 use App\DTO\GameBufferDTO;
 use App\Entity\Sport;
+use App\Utils\Property\PropSport;
 use Doctrine\ORM\EntityManagerInterface;
 
 class PropSportTest extends TestingPropWithoutSport
@@ -19,7 +19,7 @@ class PropSportTest extends TestingPropWithoutSport
     {
         $stubDTO = $this->createMock(GameBufferDTO::class);
         $stubDTO->method('getSport')
-            ->willReturn($value);;
+            ->willReturn($value);
         return $stubDTO;
     }
 

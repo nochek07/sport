@@ -2,8 +2,8 @@
 
 namespace App\Tests\Utils\Property;
 
-use App\Utils\Property\{AbstractProperty, OutDataInterface, PropertyInterface};
 use App\Entity\Sport;
+use App\Utils\Property\{AbstractProperty, OutDataInterface, PropertyInterface};
 use PHPUnit\Framework\TestCase;
 
 abstract class TestingPropWithSport extends TestCase

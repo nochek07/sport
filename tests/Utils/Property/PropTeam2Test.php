@@ -2,9 +2,9 @@
 
 namespace App\Tests\Utils\Property;
 
-use App\Utils\Property\{AbstractTeam, PropTeam2};
 use App\DTO\GameBufferDTO;
 use App\Entity\Team;
+use App\Utils\Property\{AbstractTeam, PropTeam2};
 use Doctrine\ORM\EntityManagerInterface;
 
 class PropTeam2Test extends TestingPropWithSport

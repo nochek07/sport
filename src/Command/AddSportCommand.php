@@ -5,7 +5,7 @@ namespace App\Command;
 use App\Entity\{Game, GameBuffer};
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\{InputInterface, InputArgument};
+use Symfony\Component\Console\Input\{InputArgument, InputInterface};
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AddSportCommand extends Command

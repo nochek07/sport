@@ -2,8 +2,8 @@
 
 namespace App\Tests\Utils\Property;
 
-use App\Utils\Property\{AbstractProperty, OutDataInterface, PropertyInterface};
 use App\DTO\GameBufferDTO;
+use App\Utils\Property\{AbstractProperty, OutDataInterface, PropertyInterface};
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
@@ -63,7 +63,7 @@ class AbstractPropertyTest extends TestCase
         $this->assertCount(1, $this->stubAbstractProperty->getOutData());
     }
 
-    public function testlookForOutData()
+    public function testLookForOutData()
     {
         $stubDTO = $this->createMock(GameBufferDTO::class);
         $this->assertNull($this->stubAbstractProperty->lookForOutData($stubDTO));

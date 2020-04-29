@@ -2,9 +2,9 @@
 
 namespace App\Tests\Utils\Property;
 
-use App\Utils\Property\PropLanguage;
 use App\DTO\GameBufferDTO;
 use App\Entity\Language;
+use App\Utils\Property\PropLanguage;
 use Doctrine\ORM\EntityManagerInterface;
 
 class PropLanguageTest extends TestingPropWithoutSport
@@ -19,7 +19,7 @@ class PropLanguageTest extends TestingPropWithoutSport
     {
         $stubDTO = $this->createMock(GameBufferDTO::class);
         $stubDTO->method('getLanguage')
-            ->willReturn($value);;
+            ->willReturn($value);
         return $stubDTO;
     }
 

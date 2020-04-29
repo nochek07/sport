@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\DTO\GameBufferDTO;
-use App\Utils\Property\{PropLeague, PropLanguage, PropSource, PropSport, PropTeam1, PropTeam2};
+use App\Utils\Property\{PropLanguage, PropLeague, PropSource, PropSport, PropTeam1, PropTeam2};
 use Doctrine\ORM\EntityManagerInterface;
 
 class PropertyBuilder
