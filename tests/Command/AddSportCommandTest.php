@@ -8,6 +8,7 @@ use App\Entity\{Game, GameBuffer};
 use App\Service\PropertyBuilder;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 
 class AddSportCommandTest extends KernelTestCase
@@ -45,7 +46,7 @@ class AddSportCommandTest extends KernelTestCase
         $gameBufferTest->setDate($filter['date']);
         $gameBufferTest->setSource($filter['source']);
 
-        $manager = $container->get('doctrine.orm.default_entity_manager');
+        $manager = $container->get('doctrine.orm.entity_manager');
         $manager->persist($gameBufferTest);
         $manager->flush();
 
@@ -64,7 +65,7 @@ class AddSportCommandTest extends KernelTestCase
         /**
          * @var GameBuffer $gameBuffer
          */
-        $gameBuffer = $container->get('doctrine.orm.default_entity_manager')
+        $gameBuffer = $container->get('doctrine.orm.entity_manager')
             ->getRepository(GameBuffer::class)
             ->find($this->id);
         $this->assertNotNull($gameBuffer);
@@ -80,6 +81,9 @@ class AddSportCommandTest extends KernelTestCase
      */
     private function executeCommand(array $arguments, array $inputs = [])
     {
+        /**
+         * @var Command $command
+         */
         $command = self::$container->get(AddSportCommand::class);
         $command->setApplication(new Application(self::$kernel));
 

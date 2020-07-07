@@ -6,9 +6,9 @@ use App\Command\AddSportCommand;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Process;
 
-class BackgroundProcess
+class BackgroundCommander
 {
-    private $defaultName;
+    private $defaultCommand;
 
     /**
      * @var KernelInterface
@@ -16,14 +16,14 @@ class BackgroundProcess
     private $kernel;
 
     /**
-     * BackgroundProcess constructor.
+     * BackgroundCommander constructor.
      *
      * @param KernelInterface $kernel
      */
     public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
-        $this->defaultName = 'bin/console ' . AddSportCommand::getDefaultName();
+        $this->defaultCommand = 'bin/console ' . AddSportCommand::getDefaultName();
     }
 
     /**
@@ -34,7 +34,7 @@ class BackgroundProcess
     public function runProcess(array $params)
     {
         $serializer = base64_encode(serialize($params));
-        $process = Process::fromShellCommandline($this->defaultName . ' "' . $serializer . '" > /dev/null 2>&1 &');
+        $process = Process::fromShellCommandline($this->defaultCommand . ' "' . $serializer . '" > /dev/null 2>&1 &');
         $process->setWorkingDirectory($this->kernel->getProjectDir());
         $process->run();
     }

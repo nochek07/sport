@@ -36,7 +36,7 @@ class Util
      *
      * @return bool
      */
-    static public function isDate(string $str)
+    static public function isDate(string $str): bool
     {
         return empty(trim($str)) ? false : is_numeric(strtotime($str));
     }

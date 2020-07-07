@@ -22,7 +22,7 @@ class ApiV1
     private $propertyBuilder;
 
     /**
-     * @var BackgroundProcess
+     * @var BackgroundCommander
      */
     private $process;
 
@@ -36,13 +36,13 @@ class ApiV1
      *
      * @param EntityManagerInterface $manager
      * @param PropertyBuilder $propertyBuilder
-     * @param BackgroundProcess $process
+     * @param BackgroundCommander $process
      * @param ValidatorInterface $validator
      */
     public function __construct(
         EntityManagerInterface $manager,
         PropertyBuilder $propertyBuilder,
-        BackgroundProcess $process,
+        BackgroundCommander $process,
         ValidatorInterface $validator
     ) {
         $this->manager = $manager;
