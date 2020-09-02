@@ -1,4 +1,4 @@
-FROM php:7.2-fpm
+FROM php:7.2.32-fpm
 
 ARG INSTALL_XDEBUG
 ARG INSTALL_COMPOSER
@@ -10,7 +10,7 @@ RUN docker-php-ext-configure intl && docker-php-ext-install intl
 
 # XDebug
 RUN if [ -n "$INSTALL_XDEBUG" ] && [ "$INSTALL_XDEBUG" = "true" ]; then \
-        pecl install xdebug-2.7.1 \
+        pecl install xdebug-2.9.6 \
         && docker-php-ext-enable xdebug; \
     fi
 

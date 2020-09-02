@@ -5,8 +5,8 @@ namespace App\Repository;
 use App\Entity\{Team, Sport};
 use App\Utils\Util;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\ResultSetMapping;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Team|null find($id, $lockMode = null, $lockVersion = null)
