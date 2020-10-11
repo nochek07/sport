@@ -1,7 +1,8 @@
 <?php
 
-namespace App\DTO;
+namespace App\Tests\DTO;
 
+use App\DTO\GameBufferDTO;
 use PHPUnit\Framework\TestCase;
 
 class GameBufferDTOTest extends TestCase

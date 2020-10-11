@@ -11,6 +11,9 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ApiV1
 {
+    const RESULT_SUCCESS = 1;
+    const RESULT_FAIL = 0;
+
     /**
      * @var EntityManagerInterface
      */
@@ -61,9 +64,8 @@ class ApiV1
     public function addGame(Request $request): array
     {
         $data = json_decode($request->getContent(), true);
-
         if (isset($data['events'])) {
-            $dtoArray = $this->fillingAndValidateDTO($data['events']);
+            $dtoArray = $this->fillingAndValidateDTO($data['events'], $this->validator);
             if (sizeof($dtoArray) > 0) {
                 $this->propertyBuilder->fillingData($dtoArray);
 
@@ -77,12 +79,13 @@ class ApiV1
                         ->findOneBy($filter);
                     if (!($gameBuffer instanceof GameBuffer)) {
                         $gameBuffer = new GameBuffer();
-                        $gameBuffer->setLeague($filter['league']);
-                        $gameBuffer->setLanguage($filter['language']);
-                        $gameBuffer->setTeam1($filter['team1']);
-                        $gameBuffer->setTeam2($filter['team2']);
-                        $gameBuffer->setDate($filter['date']);
-                        $gameBuffer->setSource($filter['source']);
+                        $gameBuffer
+                            ->setLeague($filter['league'])
+                            ->setLanguage($filter['language'])
+                            ->setTeam1($filter['team1'])
+                            ->setTeam2($filter['team2'])
+                            ->setDate($filter['date'])
+                            ->setSource($filter['source']);
                         $this->manager->persist($gameBuffer);
 
                         $arrayForGames[] = $gameBuffer;
@@ -98,10 +101,10 @@ class ApiV1
                     $this->process->runProcess($arrayForGames);
                 }
 
-                return ['success' => 1];
+                return ['success' => self::RESULT_SUCCESS];
             }
         }
-        return ['success' => 0];
+        return ['success' => self::RESULT_FAIL];
     }
 
     /**
@@ -116,8 +119,6 @@ class ApiV1
      */
     public function random(Request $request): array
     {
-        $result = [];
-
         /**
          * @var Game $randGame
          */
@@ -125,6 +126,7 @@ class ApiV1
             ->getRepository(Game::class)
             ->getRandom();
 
+        $result = [];
         if ($randGame instanceof Game) {
             $result = [
                 "game" => [
@@ -138,16 +140,7 @@ class ApiV1
                 "buffers" => []
             ];
 
-            $filter = [];
-            if (!empty($request->query->get('source') ?? '')) {
-                $filter['source'] = $request->query->get('source');
-            }
-            if (Util::isDate($request->query->get('start') ?? '')
-                && Util::isDate($request->query->get('end') ?? '')) {
-                $filter['start'] = $request->query->get('start');
-                $filter['end'] = $request->query->get('end');
-            }
-
+            $filter = $this->getFilterFromRequest($request);
             $gamesBuffer = $this->manager
                 ->getRepository(GameBuffer::class)
                 ->findByGame($randGame, $filter);
@@ -175,20 +168,43 @@ class ApiV1
      * Filling And Validate DTO Game Buffer
      *
      * @param array $events
+     * @param ValidatorInterface $validator
      *
      * @return GameBufferDTO[]
      */
-    private function fillingAndValidateDTO(array $events)
+    private function fillingAndValidateDTO(array $events, ValidatorInterface $validator)
     {
         $result = [];
         foreach ($events as $event) {
             $dto = new GameBufferDTO($event);
-            $errors = $this->validator->validate($dto);
+            $errors = $validator->validate($dto);
             if (count($errors) == 0) {
                 $result[] = $dto;
             }
         }
 
         return $result;
+    }
+
+    /**
+     * Get Filter array from Request
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function getFilterFromRequest(Request $request)
+    {
+        $filter = [];
+        $source = trim($request->query->get('source') ?? '');
+        if (!empty($source)) {
+            $filter['source'] = $source;
+        }
+        if (Util::isDate($request->query->get('start') ?? '')
+            && Util::isDate($request->query->get('end') ?? '')) {
+            $filter['start'] = $request->query->get('start');
+            $filter['end'] = $request->query->get('end');
+        }
+        return $filter;
     }
 }

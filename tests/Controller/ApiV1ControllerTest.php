@@ -2,6 +2,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Service\ApiV1;
 use Symfony\Component\HttpFoundation\{Request, Response};
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -37,7 +38,7 @@ class ApiV1ControllerTest extends WebTestCase
         $results = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertIsArray($results);
         $this->assertArrayHasKey("success", $results);
-        $this->assertSame($results["success"], 0);
+        $this->assertSame($results["success"], ApiV1::RESULT_FAIL);
     }
 
     /**
@@ -117,7 +118,7 @@ class ApiV1ControllerTest extends WebTestCase
         $results = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertIsArray($results);
         $this->assertArrayHasKey("success", $results);
-        $this->assertSame($results["success"], 1);
+        $this->assertSame($results["success"], ApiV1::RESULT_SUCCESS);
     }
 
     public function additionProvider()
