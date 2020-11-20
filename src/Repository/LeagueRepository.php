@@ -18,6 +18,7 @@ class LeagueRepository extends ServiceEntityRepository
 {
     /**
      * LeagueRepository constructor.
+     *
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
@@ -49,12 +50,12 @@ class LeagueRepository extends ServiceEntityRepository
             ->createNativeQuery("
                 SELECT l.id, l.name, l.sport_id
                 FROM                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-                  {$this->getClassMetadata()->getTableName()} l
+                    {$this->getClassMetadata()->getTableName()} l
                 LEFT JOIN {$sport->getClassMetadata()->getTableName()} s 
                     ON s.id = l.sport_id                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
                 WHERE 
                     (l.name, s.name) IN ({$stringParams})
-            ", $rsm)
+                ", $rsm)
             ->getResult();
     }
 

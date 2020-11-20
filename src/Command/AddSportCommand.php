@@ -41,7 +41,6 @@ class AddSportCommand extends Command
     {
         $arrayForGamesID = unserialize(base64_decode($input->getArgument('serialiseObject')));
         if (is_array($arrayForGamesID)) {
-
             $foundGameBuffers = $this->manager
                 ->getRepository(GameBuffer::class)
                 ->findBy(['id' => $arrayForGamesID]);
@@ -53,14 +52,12 @@ class AddSportCommand extends Command
                 $sport = $gameBuffer->getLeague()->getSport();
                 $diff = $sport->getDiff();
                 /**
-                 * @var \DateTime $date
+                 * @var \DateTimeImmutable $date
                  */
                 $date = $gameBuffer->getDate();
-
-                $dateStart = clone $date;
-                $dateEnd = clone $date;
-                $dateStart->modify("- {$diff} hour");
-                $dateEnd->modify("+ {$diff} hour");
+                
+                $dateStart = $date->modify("- {$diff} hour");
+                $dateEnd = $date->modify("+ {$diff} hour");
 
                 /**
                  * @var Game $foundGame

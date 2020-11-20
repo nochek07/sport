@@ -65,7 +65,7 @@ class GameBufferDTO
         $dateString = trim($params['date'] ?? '-');
         $dateString = empty($dateString) ? '-' : $dateString;
         try {
-            $date = new \DateTime($dateString ?? '-');
+            $date = new \DateTimeImmutable($dateString ?? '-');
             $this->setDate($date);
         } catch (\Exception $e) {
             unset($e);

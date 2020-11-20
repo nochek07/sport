@@ -16,6 +16,7 @@ class SportRepository extends ServiceEntityRepository
 {
     /**
      * SportRepository constructor.
+     *
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)

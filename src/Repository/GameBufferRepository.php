@@ -16,6 +16,7 @@ class GameBufferRepository extends ServiceEntityRepository
 {
     /**
      * GameBufferRepository constructor.
+     *
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
@@ -32,7 +33,7 @@ class GameBufferRepository extends ServiceEntityRepository
      *
      * @return GameBuffer[]
      */
-    public function findByGame(Game $game, $filter = [])
+    public function findByGame(Game $game, array $filter = [])
     {
         $builder = $this->createQueryBuilder('gb')
             ->andWhere('gb.game = :game')

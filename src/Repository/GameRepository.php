@@ -16,6 +16,7 @@ class GameRepository extends ServiceEntityRepository
 {
     /**
      * GameRepository constructor.
+     *
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
@@ -27,14 +28,14 @@ class GameRepository extends ServiceEntityRepository
      * Find Game By GameBuffer and period
      *
      * @param GameBuffer $buffer
-     * @param \DateTime $dateStart
-     * @param \DateTime $dateEnd
+     * @param \DateTimeInterface $dateStart
+     * @param \DateTimeInterface $dateEnd
      *
      * @return Game|null Returns an array of Game objects
      *
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findByBuffer(GameBuffer $buffer, \DateTime $dateStart, \DateTime $dateEnd)
+    public function findByBuffer(GameBuffer $buffer, \DateTimeInterface $dateStart, \DateTimeInterface $dateEnd)
     {
         return $this->createQueryBuilder('g')
             ->andWhere('g.language = :lang')
