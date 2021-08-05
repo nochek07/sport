@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.8"
 
 services:
   nginx_sport:
@@ -8,9 +8,9 @@ services:
     volumes:
       - ./:/var/www/sport
       - ./docker/nginx/sport.conf:/etc/nginx/conf.d/default.conf
-    container_name: nginxSport
+    container_name: sport-nginx
     networks:
-      - sport_network
+      - sport-network
     depends_on:
       - php7.2-fpm
 
@@ -20,9 +20,9 @@ services:
     volumes:
       - ./:/var/www/sport
       - ./docker/php-fpm/php.ini:/usr/local/etc/php/php.ini
-    container_name: php7.2-fpm
+    container_name: sport-php7.2-fpm
     networks:
-      - sport_network
+      - sport-network
     depends_on:
       - db
 
@@ -35,15 +35,15 @@ services:
     volumes:
       - ./docker/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
       - persistent:/var/lib/mysql
-    container_name: mysql
+    container_name: sport-db
     networks:
-      - sport_network
+      - sport-network
 
 volumes:
   persistent:
-    name: mysqlVolume
+    name: sport-volume
 
 networks:
-  sport_network:
+  sport-network:
     driver: bridge
-    name: sport_network
+    name: sport-network
