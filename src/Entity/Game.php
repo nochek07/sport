@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Game
@@ -22,6 +24,7 @@ class Game implements GameInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"id_game"})
      */
     private $id;
 
@@ -125,9 +128,9 @@ class Game implements GameInterface
     }
 
     /**
-     * @return ArrayCollection|GameBuffer[]
+     * @return Collection|GameBuffer[]
      */
-    public function getGameBuffers(): ArrayCollection
+    public function getGameBuffers(): Collection
     {
         return $this->gameBuffers;
     }

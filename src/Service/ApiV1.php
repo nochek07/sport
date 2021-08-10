@@ -114,8 +114,6 @@ class ApiV1
      * @param Request $request
      *
      * @return array
-     *
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function random(Request $request): array
     {
@@ -128,37 +126,15 @@ class ApiV1
 
         $result = [];
         if ($randGame instanceof Game) {
-            $result = [
-                "game" => [
-                    "lang" => $randGame->getLanguage()->getName(),
-                    "sport" => $randGame->getLeague()->getSport()->getName(),
-                    "league" => $randGame->getLeague()->getName(),
-                    "team1" => $randGame->getTeam1()->getName(),
-                    "team2" => $randGame->getTeam2()->getName(),
-                    "date" => $randGame->getDate()->format('Y-m-d G:i:s'),
-                ],
-                "buffers" => []
-            ];
-
             $filter = $this->getFilterFromRequest($request);
             $gamesBuffer = $this->manager
                 ->getRepository(GameBuffer::class)
                 ->findByGame($randGame, $filter);
 
-            /**
-             * @var GameBuffer[] $gamesBuffer
-             */
-            foreach ($gamesBuffer as $gameBuffer) {
-                $result["buffers"][] = [
-                    "lang" => $gameBuffer->getLanguage()->getName(),
-                    "sport" => $gameBuffer->getLeague()->getSport()->getName(),
-                    "league" => $gameBuffer->getLeague()->getName(),
-                    "team1" => $gameBuffer->getTeam1()->getName(),
-                    "team2" => $gameBuffer->getTeam2()->getName(),
-                    "date" => $gameBuffer->getDate()->format('Y-m-d G:i:s'),
-                    "source" => $gameBuffer->getSource()->getName(),
-                ];
-            }
+            $result = [
+                "game" => $randGame,
+                "buffers" => $gamesBuffer
+            ];
         }
 
         return $result;
@@ -172,7 +148,7 @@ class ApiV1
      *
      * @return GameBufferDTO[]
      */
-    private function fillingAndValidateDTO(array $events, ValidatorInterface $validator)
+    private function fillingAndValidateDTO(array $events, ValidatorInterface $validator): array
     {
         $result = [];
         foreach ($events as $event) {
@@ -193,7 +169,7 @@ class ApiV1
      *
      * @return array
      */
-    private function getFilterFromRequest(Request $request)
+    private function getFilterFromRequest(Request $request): array
     {
         $filter = [];
         $source = trim($request->query->get('source') ?? '');

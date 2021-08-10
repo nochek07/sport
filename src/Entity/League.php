@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -81,9 +82,9 @@ class League
     }
 
     /**
-     * @return ArrayCollection|Game[]
+     * @return Collection|Game[]
      */
-    public function getGames(): ArrayCollection
+    public function getGames(): Collection
     {
         return $this->games;
     }
@@ -110,9 +111,9 @@ class League
     }
 
     /**
-     * @return ArrayCollection|GameBuffer[]
+     * @return Collection|GameBuffer[]
      */
-    public function getGameBuffers(): ArrayCollection
+    public function getGameBuffers(): Collection
     {
         return $this->gameBuffers;
     }

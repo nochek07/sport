@@ -6,6 +6,7 @@ use App\Service\ApiV1;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request};
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class ApiV1Controller extends AbstractController
 {
@@ -32,16 +33,17 @@ class ApiV1Controller extends AbstractController
      *
      * @param Request $request
      * @param ApiV1 $api
-     *
+     * @param SerializerInterface $serializer
      * @return JsonResponse
-     *
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function random(Request $request, ApiV1 $api)
+    public function random(Request $request, ApiV1 $api, SerializerInterface $serializer)
     {
         $result = $api->random($request);
+        $data = $serializer->serialize($result, 'json', [
+            'datetime_format' => 'Y-m-d G:i:s',
+        ]);
 
-        $response = new JsonResponse($result);
+        $response = new JsonResponse($data, 200, [], true);
         $response->setEncodingOptions(JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
 
         return $response;
