@@ -28,8 +28,8 @@ class GameNormalizer implements NormalizerInterface, SerializerAwareInterface
         return $this->serializer->normalize($data, $format, $context);
     }
 
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null, array $context = [])
     {
-        return $data instanceof GameInterface;
+        return $data instanceof GameInterface && !isset($context['groups']);
     }
 }

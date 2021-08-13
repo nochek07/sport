@@ -33,17 +33,17 @@ class AddSportCommand extends Command
         $this
             ->setDescription('Add a new sport.')
             ->setHelp('This command allows you to add a sport...')
-            ->addArgument('serialiseObject', InputArgument::REQUIRED, 'Serialise object')
+            ->addArgument('serialisedData', InputArgument::REQUIRED, 'Serialises data')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $arrayForGamesID = unserialize(base64_decode($input->getArgument('serialiseObject')));
-        if (is_array($arrayForGamesID)) {
+        $games = json_decode($input->getArgument('serialisedData'));
+        if (is_array($games)) {
             $foundGameBuffers = $this->manager
                 ->getRepository(GameBuffer::class)
-                ->findBy(['id' => $arrayForGamesID]);
+                ->findBy(['id' => $games]);
 
             /**
              * @var GameBuffer $gameBuffer
@@ -86,7 +86,7 @@ class AddSportCommand extends Command
         }
 
         $output->writeln([
-            'END!'
+            'Done!'
         ]);
     }
 }

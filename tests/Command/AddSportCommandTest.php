@@ -58,7 +58,7 @@ class AddSportCommandTest extends KernelTestCase
         $this->assertGreaterThan(0, $this->id);
 
         $this->executeCommand([
-            'serialiseObject' => base64_encode(serialize([$this->id, 4]))
+            'serialisedData' => json_encode([$this->id, 4])
         ]);
 
         $container = self::$container;

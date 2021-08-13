@@ -8,10 +8,15 @@ use Symfony\Component\HttpFoundation\{JsonResponse, Request};
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
+/**
+ * Class ApiV1Controller
+ *
+ * @Route("/v1/api", name="api_v1_")
+ */
 class ApiV1Controller extends AbstractController
 {
     /**
-     * @Route("/v1/api/add", name="api_add_post_v1", methods={"POST"})
+     * @Route("/add", name="add_post", methods={"POST"})
      *
      * @param Request $request
      * @param ApiV1 $api
@@ -29,7 +34,7 @@ class ApiV1Controller extends AbstractController
     }
 
     /**
-     * @Route("/v1/api/random", name="api_random_get_v1", methods={"GET"})
+     * @Route("/random", name="random", methods={"GET"})
      *
      * @param Request $request
      * @param ApiV1 $api
