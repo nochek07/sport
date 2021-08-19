@@ -3,7 +3,6 @@
 namespace App\Tests\Command;
 
 use App\Command\AddSportCommand;
-use App\DTO\GameBufferDTO;
 use App\Entity\{Game, GameBuffer};
 use App\Service\PropertyBuilder;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -24,6 +23,7 @@ class AddSportCommandTest extends KernelTestCase
 
         $container = self::$container;
         $propertyBuilder = $container->get(PropertyBuilder::class);
+        $serializer = $container->get('serializer');
 
         $event = [
             "lang" => "русский",
@@ -34,9 +34,9 @@ class AddSportCommandTest extends KernelTestCase
             "date" => "2020-03-01 11:00:00",
             "source" => "sportdata1.com"
         ];
-        $dto = new GameBufferDTO($event);
+        $dto = $serializer->deserialize(json_encode($event), 'App\DTO\GameBufferDTO', 'json');
         $propertyBuilder->fillingData([$dto]);
-        $filter = $propertyBuilder->getFilterData($dto);
+        $filter = $propertyBuilder->getDataFilter($dto);
 
         $gameBufferTest = new GameBuffer();
         $gameBufferTest->setLeague($filter['league']);

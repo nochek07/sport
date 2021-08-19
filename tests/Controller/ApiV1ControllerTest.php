@@ -75,7 +75,8 @@ class ApiV1ControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
 
-        $results = json_decode($this->client->getResponse()->getContent(), true);
+        $response = $this->client->getResponse();
+        $results = json_decode($response->getContent(), true);
         $this->assertIsArray($results);
         $this->assertLessThan(count($results), 0);
         $this->assertArrayHasKey("game", $results);

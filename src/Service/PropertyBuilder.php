@@ -85,7 +85,7 @@ class PropertyBuilder
         $this->propertyTeam2->addOutData($this->propertyTeam1->getOutData());
     }
 
-    public function getFilterData(GameBufferDTO $dto)
+    public function getDataFilter(GameBufferDTO $dto)
     {
         $lang = $this->propertyLanguage->lookForOutData($dto);
         if (!($lang instanceof \App\Entity\Language)) {

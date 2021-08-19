@@ -7,6 +7,8 @@ use App\Entity\{Game, GameBuffer};
 use App\Utils\Util;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Exception\UnexpectedValueException;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ApiV1
@@ -35,43 +37,50 @@ class ApiV1
     private $validator;
 
     /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
      * ApiV1 constructor.
      *
      * @param EntityManagerInterface $manager
      * @param PropertyBuilder $propertyBuilder
      * @param BackgroundCommander $process
      * @param ValidatorInterface $validator
+     * @param SerializerInterface $serializer
      */
     public function __construct(
         EntityManagerInterface $manager,
         PropertyBuilder $propertyBuilder,
         BackgroundCommander $process,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        SerializerInterface $serializer
     ) {
         $this->manager = $manager;
         $this->propertyBuilder = $propertyBuilder;
         $this->process = $process;
         $this->validator = $validator;
+        $this->serializer = $serializer;
     }
 
     /**
      * Add Game
      *
      * @param Request $request
-     *
      * @return array
      */
     public function addGame(Request $request): array
     {
-        $data = json_decode($request->getContent(), true);
+        $data = $this->getDeserializedData($request->getContent(), $this->serializer);
         if (isset($data['events'])) {
-            $dtoArray = $this->fillingAndValidateDTO($data['events'], $this->validator);
-            if (sizeof($dtoArray) > 0) {
-                $this->propertyBuilder->fillingData($dtoArray);
+            $validatedData = $this->getValidatedDTO($data['events'], $this->validator);
+            if (sizeof($validatedData) > 0) {
+                $this->propertyBuilder->fillingData($validatedData);
 
                 $newGames = [];
-                foreach ($dtoArray as $dto) {
-                    $filter = $this->propertyBuilder->getFilterData($dto);
+                foreach ($validatedData as $dto) {
+                    $filter = $this->propertyBuilder->getDataFilter($dto);
 
                     // Game_Buffer
                     $gameBuffer = $this->manager
@@ -99,6 +108,7 @@ class ApiV1
                 return ['success' => self::RESULT_SUCCESS];
             }
         }
+
         return ['success' => self::RESULT_FAIL];
     }
 
@@ -136,21 +146,38 @@ class ApiV1
     }
 
     /**
-     * Filling And Validate DTO Game Buffer
+     * Get deserialized data
+     *
+     * @param string $context
+     * @param SerializerInterface $serializer
+     *
+     * @return GameBufferDTO[][]
+     */
+    private function getDeserializedData(string $context, SerializerInterface $serializer): array
+    {
+        try {
+            $data = $serializer->deserialize($context, 'App\DTO\GameBufferDTO[][]', 'json');
+        } catch (UnexpectedValueException $e) {
+            $data = [];
+        }
+        return $data;
+    }
+
+    /**
+     * Get Validated DTO Game Buffer
      *
      * @param array $events
      * @param ValidatorInterface $validator
      *
      * @return GameBufferDTO[]
      */
-    private function fillingAndValidateDTO(array $events, ValidatorInterface $validator): array
+    private function getValidatedDTO(array $events, ValidatorInterface $validator): array
     {
         $result = [];
         foreach ($events as $event) {
-            $dto = new GameBufferDTO($event);
-            $errors = $validator->validate($dto);
+            $errors = $validator->validate($event);
             if (count($errors) == 0) {
-                $result[] = $dto;
+                $result[] = $event;
             }
         }
 
