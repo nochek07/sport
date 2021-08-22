@@ -3,7 +3,12 @@
 namespace App\Tests\Service;
 
 use App\DTO\GameBufferDTO;
+use App\Entity\Game;
+use App\Entity\GameBuffer;
+use App\Entity\Sport;
 use App\Service\ApiV1;
+use App\Service\PropertyBuilder;
+use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,11 +17,20 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ApiV1Test extends KernelTestCase
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $manager;
 
     /**
      * @var ApiV1
      */
-    private $stubApiV1;
+    private $stubApi;
+
+    /**
+     * @var ApiV1
+     */
+    private $api;
 
     /**
      * @var SerializerInterface
@@ -28,15 +42,95 @@ class ApiV1Test extends KernelTestCase
      */
     private $validator;
 
+    /**
+     * @var PropertyBuilder
+     */
+    private $propertyBuilder;
+
     public function setUp(): void
     {
         self::bootKernel();
         
         $container = self::$container;
+        $this->manager = $container->get('doctrine.orm.entity_manager');
         $this->validator = $container->get("validator");
         $this->serializer = $container->get("serializer");
+        $this->propertyBuilder = $container->get(PropertyBuilder::class);
+        $this->api = $container->get(ApiV1::class);
 
-        $this->stubApiV1 = $this->createMock(ApiV1::class);
+        $this->stubApi = $this->createMock(ApiV1::class);
+    }
+
+    public function testAddGamesByArray()
+    {
+        $id = $this->setTestData([
+            "lang" => "русский",
+            "sport" => "Баскетбол",
+            "league" => "Суперлига 1",
+            "team1" => "Урал",
+            "team2" => "Автодор",
+            "date" => "2020-03-01 11:00:00",
+            "source" => "sportdata1.com"
+        ]);
+        $this->assertGreaterThan(0, $id);
+
+        $result = $this->api->addGamesByArray([$id, 4]);
+        $this->assertEquals(0, $result);
+
+        $gameBuffer = $this->getGameBuffer($id);
+        $this->assertNotNull($gameBuffer);
+
+        $game = $gameBuffer->getGame();
+        $this->assertNotNull($game);
+        $this->assertInstanceOf(Game::class, $game);
+    }
+
+    public function testUpdateGamesByArray()
+    {
+        $nameSport = "Гандбол";
+        $data = [
+            "lang" => "русский",
+            "sport" => $nameSport,
+            "league" => "Высшая лига",
+            "team1" => "ЦСКА",
+            "team2" => "Нева",
+            "date" => "2020-03-01 11:00:00",
+            "source" => "sportdata1.com"
+        ];
+        $id = $this->setTestData($data);
+        /**
+         * @var Sport $sport
+         */
+        $sport = $this->manager
+            ->getRepository(Sport::class)
+            ->findOneBy(["name" => $nameSport]);
+        $sport->setDiff(1);
+        $this->manager->flush();
+
+        $this->assertGreaterThan(0, $id);
+        $this->assertInstanceOf(Sport::class, $sport);
+
+        $result = $this->api->addGamesByArray([$id, 4]);
+        $this->assertEquals(0, $result);
+
+        $gameBuffer = $this->getGameBuffer($id);
+        $this->assertNotNull($gameBuffer);
+
+        $game = $gameBuffer->getGame();
+        $this->assertNotNull($game);
+        $this->assertInstanceOf(Game::class, $game);
+
+        $data["date"] = "2020-03-01 11:30:00";
+        $data["source"] = "sportdata2.com";
+        $idNew = $this->setTestData($data);
+        $this->assertGreaterThan(0, $idNew);
+
+        $result = $this->api->addGamesByArray([$idNew, 4]);
+        $this->assertEquals(0, $result);
+
+        $gameBufferNew = $this->getGameBuffer($idNew);
+        $gameNew = $gameBufferNew->getGame();
+        $this->assertSame($gameNew, $game);
     }
 
     /**
@@ -51,7 +145,7 @@ class ApiV1Test extends KernelTestCase
         $method = $class->getMethod('getDeserializedData');
         $method->setAccessible(true);
 
-        $result = $method->invoke($this->stubApiV1, json_encode($events), $this->serializer);
+        $result = $method->invoke($this->stubApi, json_encode($events), $this->serializer);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('events', $result);
@@ -64,7 +158,7 @@ class ApiV1Test extends KernelTestCase
         $method = $class->getMethod('getValidatedDTO');
         $method->setAccessible(true);
 
-        $result = $method->invoke($this->stubApiV1, $result['events'], $this->validator);
+        $result = $method->invoke($this->stubApi, $result['events'], $this->validator);
         $this->assertCount($size, $result);
     }
 
@@ -80,7 +174,7 @@ class ApiV1Test extends KernelTestCase
         $method = $class->getMethod('getDeserializedData');
         $method->setAccessible(true);
 
-        $result = $method->invoke($this->stubApiV1, json_encode($events), $this->serializer);
+        $result = $method->invoke($this->stubApi, json_encode($events), $this->serializer);
 
         $this->assertIsArray($result);
         $this->assertCount($size, $result);
@@ -94,7 +188,7 @@ class ApiV1Test extends KernelTestCase
             $method = $class->getMethod('getValidatedDTO');
             $method->setAccessible(true);
 
-            $result = $method->invoke($this->stubApiV1, $result['events'], $this->validator);
+            $result = $method->invoke($this->stubApi, $result['events'], $this->validator);
             $this->assertCount(0, $result);
         }
     }
@@ -111,8 +205,45 @@ class ApiV1Test extends KernelTestCase
         $method = $class->getMethod('getFilterFromRequest');
         $method->setAccessible(true);
 
-        $result = $method->invoke($this->stubApiV1, new Request($parameters));
+        $result = $method->invoke($this->stubApi, new Request($parameters));
         $this->assertCount($size, $result);
+    }
+
+    /**
+     * @param array $event
+     * @return int
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    private function setTestData(array $event): int
+    {
+        $dto = $this->serializer->deserialize(json_encode($event), 'App\DTO\GameBufferDTO', 'json');
+        $this->propertyBuilder->fillingData([$dto]);
+        $filter = $this->propertyBuilder->getDataFilter($dto);
+
+        $gameBufferTest = new GameBuffer();
+        $gameBufferTest->setLeague($filter['league']);
+        $gameBufferTest->setLanguage($filter['language']);
+        $gameBufferTest->setTeam1($filter['team1']);
+        $gameBufferTest->setTeam2($filter['team2']);
+        $gameBufferTest->setDate($filter['date']);
+        $gameBufferTest->setSource($filter['source']);
+
+        $this->manager->persist($gameBufferTest);
+        $this->manager->flush();
+
+        return $gameBufferTest->getId();
+    }
+
+    /**
+     * @param int $id
+     * @return GameBuffer|null
+     */
+    private function getGameBuffer(int $id): ?GameBuffer
+    {
+        return $this->manager
+            ->getRepository(GameBuffer::class)
+            ->find($id);
     }
 
     public function additionValidDTOProvider()

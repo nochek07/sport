@@ -70,7 +70,7 @@ class ApiV1
      * @param Request $request
      * @return array
      */
-    public function addGame(Request $request): array
+    public function addGameByJson(Request $request): array
     {
         $data = $this->getDeserializedData($request->getContent(), $this->serializer);
         if (isset($data['events'])) {
@@ -102,6 +102,7 @@ class ApiV1
                 }
 
                 if (sizeof($newGames) > 0) {
+                    $this->manager->flush();
                     $this->process->runProcess($newGames);
                 }
 
@@ -143,6 +144,57 @@ class ApiV1
         }
 
         return $result;
+    }
+
+    /**
+     * Add games by array for command
+     *
+     * @param array $games
+     */
+    public function addGamesByArray(array $games): void
+    {
+        /**
+         * @var GameBuffer[] $foundGameBuffers
+         */
+        $foundGameBuffers = $this->manager
+            ->getRepository(GameBuffer::class)
+            ->findBy(['id' => $games]);
+
+        foreach ($foundGameBuffers as $gameBuffer) {
+            $sport = $gameBuffer->getLeague()->getSport();
+            $diff = $sport->getDiff();
+            /**
+             * @var \DateTimeImmutable $date
+             */
+            $date = $gameBuffer->getDate();
+
+            $dateStart = $date->modify("- {$diff} hour");
+            $dateEnd = $date->modify("+ {$diff} hour");
+
+            /**
+             * @var Game $foundGame
+             */
+            $foundGame = $this->manager
+                ->getRepository(Game::class)
+                ->findByBuffer($gameBuffer, $dateStart, $dateEnd);
+            if (!($foundGame instanceof Game)) {
+                $game = new Game();
+                $game->setLeague($gameBuffer->getLeague());
+                $game->setLanguage($gameBuffer->getLanguage());
+                $game->setTeam1($gameBuffer->getTeam1());
+                $game->setTeam2($gameBuffer->getTeam2());
+                $game->setDate($gameBuffer->getDate());
+                $this->manager->persist($game);
+                $gameBuffer->setGame($game);
+            } else {
+                $difference = $date->diff($foundGame->getDate());
+                if ($difference->invert == 1) {
+                    $foundGame->setDate($date);
+                }
+                $gameBuffer->setGame($foundGame);
+            }
+            $this->manager->flush();
+        }
     }
 
     /**

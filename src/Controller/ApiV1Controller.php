@@ -25,7 +25,7 @@ class ApiV1Controller extends AbstractController
      */
     public function add(Request $request, ApiV1 $api)
     {
-        $result = $api->addGame($request);
+        $result = $api->addGameByJson($request);
 
         $response = new JsonResponse($result);
         $response->setEncodingOptions(JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);

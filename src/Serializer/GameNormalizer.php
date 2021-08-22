@@ -2,7 +2,7 @@
 
 namespace App\Serializer;
 
-use App\Entity\{GameBuffer, GameInterface};
+use App\Entity\GameInterface;
 use Symfony\Component\Serializer\Normalizer\{NormalizerAwareTrait, NormalizerInterface};
 use Symfony\Component\Serializer\{SerializerAwareInterface, SerializerAwareTrait};
 
@@ -21,14 +21,13 @@ class GameNormalizer implements NormalizerInterface, SerializerAwareInterface
             "team2" => $object->getTeam2()->getName(),
             "date" => $object->getDate(),
         ];
-        if ($object instanceof GameBuffer) {
+        if (method_exists($object, 'getSource')) {
             $data["source"] = $object->getSource()->getName();
         }
-
         return $this->serializer->normalize($data, $format, $context);
     }
 
-    public function supportsNormalization($data, $format = null, array $context = [])
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         return $data instanceof GameInterface && !isset($context['groups']);
     }

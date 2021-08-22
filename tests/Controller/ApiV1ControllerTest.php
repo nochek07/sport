@@ -61,10 +61,11 @@ class ApiV1ControllerTest extends WebTestCase
     public function testAddEventsFirst($content)
     {
         $this->addEvents($content);
-        sleep(1);
+        sleep(2);
     }
 
     /**
+     * @depends testAddEventsSecond
      * @dataProvider additionRandomProvider
      *
      * @param array $parameters
@@ -78,16 +79,14 @@ class ApiV1ControllerTest extends WebTestCase
         $response = $this->client->getResponse();
         $results = json_decode($response->getContent(), true);
         $this->assertIsArray($results);
+
         $this->assertLessThan(count($results), 0);
         $this->assertArrayHasKey("game", $results);
         $this->assertArrayHasKey("buffers", $results);
         $this->assertLessThan(count($results["game"]), 0);
-        $this->assertLessThan(count($results["buffers"]), 0);
+        $this->assertLessThanOrEqual(count($results["buffers"]), 0);
     }
 
-    /**
-     * @depends testRandom
-     */
     public function testAddEventsSecond()
     {
         $content =
@@ -103,6 +102,7 @@ class ApiV1ControllerTest extends WebTestCase
                 }
             ]}';
         $this->addEvents($content);
+        sleep(2);
     }
 
     /**
@@ -191,7 +191,7 @@ class ApiV1ControllerTest extends WebTestCase
             []
         ];
         yield [
-            ['source' => 'sportdata1.com']
+            ['source' => 'sportdata.com']
         ];
         yield [
             [
@@ -201,7 +201,7 @@ class ApiV1ControllerTest extends WebTestCase
         ];
         yield [
             [
-                'source' => 'sportdata1.com',
+                'source' => 'sportdata.com',
                 'start' => '2020-01-00 10:00:00',
                 'end' => '2020-10-01 10:00:00'
             ]
