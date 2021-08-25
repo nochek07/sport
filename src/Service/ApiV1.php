@@ -7,6 +7,7 @@ use App\Entity\{Game, GameBuffer};
 use App\Utils\Util;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -208,7 +209,7 @@ class ApiV1
     private function getDeserializedData(string $context, SerializerInterface $serializer): array
     {
         try {
-            $data = $serializer->deserialize($context, 'App\DTO\GameBufferDTO[][]', 'json');
+            $data = $serializer->deserialize($context, 'App\DTO\GameBufferDTO[][]', JsonEncoder::FORMAT);
         } catch (UnexpectedValueException $e) {
             $data = [];
         }

@@ -6,12 +6,13 @@ use App\Service\ApiV1;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request};
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * Class ApiV1Controller
  *
- * @Route("/v1/api", name="api_v1_")
+ * @Route("/api/v1", name="api_v1_")
  */
 class ApiV1Controller extends AbstractController
 {
@@ -44,7 +45,7 @@ class ApiV1Controller extends AbstractController
     public function random(Request $request, ApiV1 $api, SerializerInterface $serializer)
     {
         $result = $api->random($request);
-        $data = $serializer->serialize($result, 'json', [
+        $data = $serializer->serialize($result, JsonEncoder::FORMAT, [
             'datetime_format' => 'Y-m-d G:i:s',
         ]);
 

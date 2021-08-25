@@ -7,7 +7,7 @@ use App\Entity\League;
 use App\Utils\Property\PropLeague;
 use Doctrine\ORM\EntityManagerInterface;
 
-class PropLeagueTest extends TestingPropWithSport
+class PropLeague extends AbstractTestingPropWithSport
 {
     public function setUp(): void
     {

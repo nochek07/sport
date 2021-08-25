@@ -5,7 +5,7 @@ namespace App\Tests\Utils\Property;
 use App\Utils\Property\{AbstractProperty, OutDataInterface, PropertyInterface};
 use PHPUnit\Framework\TestCase;
 
-abstract class TestingPropWithoutSport extends TestCase
+abstract class AbstractTestingPropWithoutSport extends TestCase
 {
     /**
      * @var AbstractProperty

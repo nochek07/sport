@@ -29,7 +29,7 @@ class ApiV1ControllerTest extends WebTestCase
      */
     public function testUnsuccessful($method, $server, $content)
     {
-        $this->client->request($method, '/v1/api/add', [], [],
+        $this->client->request($method, '/api/v1/add', [], [],
             $server,
             $content
         );
@@ -72,7 +72,7 @@ class ApiV1ControllerTest extends WebTestCase
      */
     public function testRandom($parameters)
     {
-        $this->client->request(Request::METHOD_GET, '/v1/api/random', $parameters);
+        $this->client->request(Request::METHOD_GET, '/api/v1/random', $parameters);
 
         $this->assertResponseIsSuccessful();
 
@@ -110,7 +110,7 @@ class ApiV1ControllerTest extends WebTestCase
      */
     public function addEvents($content)
     {
-        $this->client->request(Request::METHOD_POST, '/v1/api/add', [], [],
+        $this->client->request(Request::METHOD_POST, '/api/v1/add', [], [],
             ['CONTENT_TYPE' => 'application/json'],
             $content
         );
@@ -133,8 +133,8 @@ class ApiV1ControllerTest extends WebTestCase
 
     public function additionAllowedProvider()
     {
-        yield [Request::METHOD_GET, '/v1/api/add'];
-        yield [Request::METHOD_POST, '/v1/api/random'];
+        yield [Request::METHOD_GET, '/api/v1/add'];
+        yield [Request::METHOD_POST, '/api/v1/random'];
     }
 
     public function additionAddProvider()

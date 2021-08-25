@@ -3,15 +3,13 @@
 namespace App\Tests\Service;
 
 use App\DTO\GameBufferDTO;
-use App\Entity\Game;
-use App\Entity\GameBuffer;
-use App\Entity\Sport;
-use App\Service\ApiV1;
-use App\Service\PropertyBuilder;
+use App\Entity\{Game, GameBuffer, Sport};
+use App\Service\{ApiV1, PropertyBuilder};
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -159,6 +157,7 @@ class ApiV1Test extends KernelTestCase
         $method->setAccessible(true);
 
         $result = $method->invoke($this->stubApi, $result['events'], $this->validator);
+        $this->assertIsArray($result);
         $this->assertCount($size, $result);
     }
 
@@ -189,6 +188,7 @@ class ApiV1Test extends KernelTestCase
             $method->setAccessible(true);
 
             $result = $method->invoke($this->stubApi, $result['events'], $this->validator);
+            $this->assertIsArray($result);
             $this->assertCount(0, $result);
         }
     }
@@ -206,6 +206,7 @@ class ApiV1Test extends KernelTestCase
         $method->setAccessible(true);
 
         $result = $method->invoke($this->stubApi, new Request($parameters));
+        $this->assertIsArray($result);
         $this->assertCount($size, $result);
     }
 
@@ -217,7 +218,7 @@ class ApiV1Test extends KernelTestCase
      */
     private function setTestData(array $event): int
     {
-        $dto = $this->serializer->deserialize(json_encode($event), 'App\DTO\GameBufferDTO', 'json');
+        $dto = $this->serializer->deserialize(json_encode($event), 'App\DTO\GameBufferDTO', JsonEncoder::FORMAT);
         $this->propertyBuilder->fillingData([$dto]);
         $filter = $this->propertyBuilder->getDataFilter($dto);
 

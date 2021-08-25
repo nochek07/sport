@@ -1,5 +1,5 @@
 ```
-1. POST /v1/api/add
+1. POST /api/v1/add
 ```
 Request
 ```
@@ -54,14 +54,14 @@ Response
 -------
 
 ```
-2. GET /v1/api/random
+2. GET /api/v1/random
 ```
 
 Request
 ```
-GET /v1/api/random?source=sportdata4.com
-GET /v1/api/random?start=2019-01-01 01:00:00&end=2019-01-02 10:00:00
-GET /v1/api/random?source=sportdata4.com&start=2019-01-01 01:00:00&end=2019-01-02 10:00:00
+GET /api/v1/random?source=sportdata4.com
+GET /api/v1/random?start=2019-01-01 01:00:00&end=2019-01-02 10:00:00
+GET /api/v1/random?source=sportdata4.com&start=2019-01-01 01:00:00&end=2019-01-02 10:00:00
 ```
 
 Response

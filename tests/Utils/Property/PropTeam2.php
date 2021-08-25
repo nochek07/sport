@@ -4,15 +4,15 @@ namespace App\Tests\Utils\Property;
 
 use App\DTO\GameBufferDTO;
 use App\Entity\Team;
-use App\Utils\Property\{AbstractTeam, PropTeam1};
+use App\Utils\Property\{AbstractTeam, PropTeam2};
 use Doctrine\ORM\EntityManagerInterface;
 
-class PropTeam1Test extends TestingPropWithSport
+class PropTeam2 extends AbstractTestingPropWithSport
 {
     public function setUp(): void
     {
         $manager = $this->createMock(EntityManagerInterface::class);
-        $this->prop = new PropTeam1($manager);
+        $this->prop = new PropTeam2($manager);
     }
 
     public function testInstanceOf()
@@ -24,7 +24,7 @@ class PropTeam1Test extends TestingPropWithSport
     public function getStubDTO(string $value)
     {
         $stubDTO = $this->createMock(GameBufferDTO::class);
-        $stubDTO->method('getTeam1')
+        $stubDTO->method('getTeam2')
             ->willReturn($value);
         return $stubDTO;
     }

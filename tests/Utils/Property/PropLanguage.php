@@ -3,28 +3,28 @@
 namespace App\Tests\Utils\Property;
 
 use App\DTO\GameBufferDTO;
-use App\Entity\Source;
-use App\Utils\Property\PropSource;
+use App\Entity\Language;
+use App\Utils\Property\PropLanguage;
 use Doctrine\ORM\EntityManagerInterface;
 
-class PropSourceTest extends TestingPropWithoutSport
+class PropLanguage extends AbstractTestingPropWithoutSport
 {
     public function setUp(): void
     {
         $manager = $this->createMock(EntityManagerInterface::class);
-        $this->prop = new PropSource($manager);
+        $this->prop = new PropLanguage($manager);
     }
 
     public function getStubDTO(string $value)
     {
         $stubDTO = $this->createMock(GameBufferDTO::class);
-        $stubDTO->method('getSource')
+        $stubDTO->method('getLanguage')
             ->willReturn($value);
         return $stubDTO;
     }
 
     public function getClassName(): string
     {
-        return Source::class;
+        return Language::class;
     }
 }

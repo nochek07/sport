@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Command\AddSportCommand;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Process;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class BackgroundCommander
@@ -45,7 +46,7 @@ class BackgroundCommander
         $newData = array_reduce($data, function ($carry, $item) {
             return array_merge($carry, array_values($item));
         }, []);
-        $serializedData = $this->serializer->serialize($newData, 'json');
+        $serializedData = $this->serializer->serialize($newData, JsonEncoder::FORMAT);
 
         $process = Process::fromShellCommandline($this->defaultCommand . ' "' . $serializedData . '" > /dev/null 2>&1 &');
         $process->setWorkingDirectory($this->kernel->getProjectDir());
