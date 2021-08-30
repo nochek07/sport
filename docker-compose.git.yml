@@ -1,32 +1,39 @@
 version: "3.8"
 
 services:
-  nginx_sport:
+  nginx-sport:
     image: nginx:latest
     ports:
       - "8000:80"
     volumes:
       - ./:/var/www/sport
       - ./docker/nginx/sport.conf:/etc/nginx/conf.d/default.conf
-    container_name: sport-nginx
-    networks:
-      - sport-network
+    working_dir: /var/www/sport
+    container_name: nginx-sport
     depends_on:
-      - php7.2-fpm
+      - php7.4-fpm-sport
+    networks:
+      - network-sport
 
-  php7.2-fpm:
+  php7.4-fpm-sport:
     build:
       context: docker/php-fpm
+      args:
+        PUID: 1000
+        PGID: 1000
+        USER: user
     volumes:
       - ./:/var/www/sport
       - ./docker/php-fpm/php.ini:/usr/local/etc/php/php.ini
-    container_name: sport-php7.2-fpm
-    networks:
-      - sport-network
+    working_dir: /var/www/sport
+    container_name: php7.4-fpm-sport
+    user: "1000:1000"
     depends_on:
-      - db
+      - db-sport
+    networks:
+      - network-sport
 
-  db:
+  db-sport:
     image: mysql:latest
     ports:
       - "3306:3306"
@@ -35,15 +42,15 @@ services:
     volumes:
       - ./docker/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf
       - persistent:/var/lib/mysql
-    container_name: sport-db
+    container_name: db-sport
     networks:
-      - sport-network
+      - network-sport
 
 volumes:
   persistent:
-    name: sport-volume
+    name: volume-sport
 
 networks:
-  sport-network:
+  network-sport:
     driver: bridge
-    name: sport-network
+    name: network-sport
