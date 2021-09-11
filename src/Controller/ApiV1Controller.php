@@ -26,7 +26,7 @@ class ApiV1Controller extends AbstractController
      */
     public function add(Request $request, ApiV1 $api)
     {
-        $result = $api->addGameByJson($request);
+        $result = $api->addGameByJson($request->getContent());
 
         $response = new JsonResponse($result);
         $response->setEncodingOptions(JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
@@ -44,7 +44,7 @@ class ApiV1Controller extends AbstractController
      */
     public function random(Request $request, ApiV1 $api, SerializerInterface $serializer)
     {
-        $result = $api->random($request);
+        $result = $api->random($request->query->all());
         $data = $serializer->serialize($result, JsonEncoder::FORMAT, [
             'datetime_format' => 'Y-m-d G:i:s',
         ]);

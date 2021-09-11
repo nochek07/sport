@@ -8,7 +8,6 @@ use App\Service\{ApiV1, PropertyBuilder};
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionClass;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -205,7 +204,7 @@ class ApiV1Test extends KernelTestCase
         $method = $class->getMethod('getFilterFromRequest');
         $method->setAccessible(true);
 
-        $result = $method->invoke($this->stubApi, new Request($parameters));
+        $result = $method->invoke($this->stubApi, $parameters);
         $this->assertIsArray($result);
         $this->assertCount($size, $result);
     }

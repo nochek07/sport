@@ -3,18 +3,12 @@
 namespace App\Command;
 
 use App\Service\ApiV1;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\{InputArgument, InputInterface};
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AddSportCommand extends Command
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $manager;
-
     /**
      * @var ApiV1
      */
@@ -25,12 +19,10 @@ class AddSportCommand extends Command
     /**
      * AddSportCommand constructor.
      *
-     * @param EntityManagerInterface $manager
      * @param ApiV1 $api
      */
-    public function __construct(EntityManagerInterface $manager, ApiV1 $api)
+    public function __construct(ApiV1 $api)
     {
-        $this->manager = $manager;
         $this->api = $api;
         parent::__construct();
     }

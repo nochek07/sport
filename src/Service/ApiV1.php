@@ -6,7 +6,6 @@ use App\DTO\GameBufferDTO;
 use App\Entity\{Game, GameBuffer};
 use App\Utils\Util;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -68,12 +67,12 @@ class ApiV1
     /**
      * Add Game
      *
-     * @param Request $request
+     * @param string $context
      * @return array
      */
-    public function addGameByJson(Request $request): array
+    public function addGameByJson(string $context): array
     {
-        $data = $this->getDeserializedData($request->getContent(), $this->serializer);
+        $data = $this->getDeserializedData($context, $this->serializer);
         if (isset($data['events'])) {
             $validatedData = $this->getValidatedDTO($data['events'], $this->validator);
             if (sizeof($validatedData) > 0) {
@@ -106,11 +105,9 @@ class ApiV1
                     $this->manager->flush();
                     $this->process->runProcess($newGames);
                 }
-
                 return ['success' => self::RESULT_SUCCESS];
             }
         }
-
         return ['success' => self::RESULT_FAIL];
     }
 
@@ -118,11 +115,10 @@ class ApiV1
      * Get random game
      * Get random game by filter
      *
-     * @param Request $request
-     *
+     * @param array $query
      * @return array
      */
-    public function random(Request $request): array
+    public function random(array $query): array
     {
         /**
          * @var Game $randGame
@@ -133,7 +129,7 @@ class ApiV1
 
         $result = [];
         if ($randGame instanceof Game) {
-            $filter = $this->getFilterFromRequest($request);
+            $filter = $this->getFilterFromRequest($query);
             $gamesBuffer = $this->manager
                 ->getRepository(GameBuffer::class)
                 ->findByGame($randGame, $filter);
@@ -143,7 +139,6 @@ class ApiV1
                 "buffers" => $gamesBuffer
             ];
         }
-
         return $result;
     }
 
@@ -169,8 +164,8 @@ class ApiV1
              */
             $date = $gameBuffer->getDate();
 
-            $dateStart = $date->modify("- {$diff} hour");
-            $dateEnd = $date->modify("+ {$diff} hour");
+            $dateStart = $date->modify("- $diff hour");
+            $dateEnd = $date->modify("+ $diff hour");
 
             /**
              * @var Game $foundGame
@@ -238,23 +233,22 @@ class ApiV1
     }
 
     /**
-     * Get Filter array from Request
+     * Get Filter array from query
      *
-     * @param Request $request
-     *
+     * @param array $query
      * @return array
      */
-    private function getFilterFromRequest(Request $request): array
+    private function getFilterFromRequest(array $query): array
     {
         $filter = [];
-        $source = trim($request->query->get('source') ?? '');
+        $source = trim($query['source'] ?? '');
         if (!empty($source)) {
             $filter['source'] = $source;
         }
-        if (Util::isDate($request->query->get('start') ?? '')
-            && Util::isDate($request->query->get('end') ?? '')) {
-            $filter['start'] = $request->query->get('start');
-            $filter['end'] = $request->query->get('end');
+        if (Util::isDate($query['start'] ?? '')
+            && Util::isDate($query['end'] ?? '')) {
+            $filter['start'] = $query['start'];
+            $filter['end'] = $query['end'];
         }
         return $filter;
     }
