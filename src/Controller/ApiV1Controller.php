@@ -29,9 +29,7 @@ class ApiV1Controller extends AbstractController
         $result = $api->addGameByJson($request->getContent());
 
         $response = new JsonResponse($result);
-        $response->setEncodingOptions(JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
-
-        return $response;
+        return $this->modifiedResponse($response);
     }
 
     /**
@@ -50,8 +48,17 @@ class ApiV1Controller extends AbstractController
         ]);
 
         $response = new JsonResponse($data, 200, [], true);
-        $response->setEncodingOptions(JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
+        return $this->modifiedResponse($response);
+    }
 
+    /**
+     * @param JsonResponse $response
+     * @return JsonResponse
+     */
+    private function modifiedResponse(JsonResponse $response)
+    {
+        $response->setEncodingOptions(JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
+        $response->headers->set('Version', 1);
         return $response;
     }
 }
