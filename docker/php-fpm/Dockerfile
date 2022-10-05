@@ -25,8 +25,8 @@ RUN if [ -n "$INSTALL_COMPOSER" ] && [ "$INSTALL_COMPOSER" = "true" ]; then \
 
 # Install binary symfony
 RUN if [ -n "$INSTALL_BINARY_SYMFONY" ] && [ "$INSTALL_BINARY_SYMFONY" = "true" ]; then \
-        wget https://get.symfony.com/cli/installer -O - | bash \
-        && mv /root/.symfony/bin/symfony /usr/local/bin/symfony; \
+        curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | bash \
+        && apt-get install symfony-cli; \
     fi
 
 # Install PDO
