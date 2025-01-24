@@ -1,0 +1,68 @@
+services:
+  nginx-sport:
+    image: nginx:latest
+    ports:
+      - "8002:80"
+    volumes:
+      - ./:/var/www/sport
+      - ./docker/nginx/sport.conf:/etc/nginx/conf.d/default.conf
+    working_dir: /var/www/sport
+    container_name: nginx-sport
+    depends_on:
+      - php7.4-fpm-sport
+    networks:
+      - sql_network
+
+  php7.4-fpm-sport:
+    build:
+      context: docker/php-fpm
+      args:
+        INSTALL_XDEBUG: "true"
+        INSTALL_COMPOSER: "true"
+        INSTALL_BINARY_SYMFONY: "true"
+        PUID: 1000
+        PGID: 1000
+        USER: user
+    volumes:
+      - ./:/var/www/sport
+      - ./docker/php-fpm/php.ini:/usr/local/etc/php/php.ini
+      - ~/.composer/:/.composer/
+      - ~/.symfony/:/.symfony/
+    working_dir: /var/www/sport
+    env_file:
+      - docker-compose.env.local # Создайте свой файл с настройками или пустой
+    container_name: php7.4-fpm-sport
+    user: "1000:1000"
+    networks:
+      - sql_network
+
+  php7.4-cli-sport:
+    build:
+      context: docker/php-cli
+      args:
+        INSTALL_XDEBUG: "true"
+        INSTALL_COMPOSER: "true"
+        PUID: 1000
+        PGID: 1000
+        USER: user
+    volumes:
+      - ./:/var/www/sport
+      - ./docker/php-cli/php.ini:/usr/local/etc/php/php.ini
+#      - ~/.composer/:/.composer/
+    working_dir: /var/www/sport
+    container_name: php7.4-cli-sport
+    environment:
+      XDEBUG_MODE: coverage
+    tty: true
+    user: "1000:1000"
+    networks:
+      - sql_network
+
+networks:
+  sql_network:
+    external: true
+    driver: bridge
+    name: sql_network
+    ipam:
+      config:
+        - subnet: "172.24.0.0/16"
