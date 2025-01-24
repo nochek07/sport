@@ -4,7 +4,6 @@ namespace App\Tests\Utils\Property;
 
 use App\DTO\GameBufferDTO;
 use App\Entity\Source;
-use App\Utils\Property\PropSource;
 use Doctrine\ORM\EntityManagerInterface;
 
 class PropSource extends AbstractTestingPropWithoutSport

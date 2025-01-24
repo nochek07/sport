@@ -4,7 +4,7 @@ namespace App\Tests\Utils\Property;
 
 use App\DTO\GameBufferDTO;
 use App\Entity\Team;
-use App\Utils\Property\{AbstractTeam, PropTeam1};
+use App\Utils\Property\AbstractTeam;
 use Doctrine\ORM\EntityManagerInterface;
 
 class PropTeam1 extends AbstractTestingPropWithSport
@@ -15,7 +15,7 @@ class PropTeam1 extends AbstractTestingPropWithSport
         $this->prop = new PropTeam1($manager);
     }
 
-    public function testInstanceOf()
+    public function testInstanceOf(): void
     {
         parent::testInstanceOf();
         $this->assertInstanceOf(AbstractTeam::class, $this->prop);

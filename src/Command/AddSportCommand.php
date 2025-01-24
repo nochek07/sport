@@ -9,17 +9,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class AddSportCommand extends Command
 {
-    /**
-     * @var ApiV1
-     */
-    private $api;
+    private ApiV1 $api;
 
     protected static $defaultName = 'app:sport:add';
 
     /**
      * AddSportCommand constructor.
-     *
-     * @param ApiV1 $api
      */
     public function __construct(ApiV1 $api)
     {

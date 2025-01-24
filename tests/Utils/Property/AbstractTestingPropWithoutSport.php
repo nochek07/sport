@@ -7,12 +7,9 @@ use PHPUnit\Framework\TestCase;
 
 abstract class AbstractTestingPropWithoutSport extends TestCase
 {
-    /**
-     * @var AbstractProperty
-     */
-    public $prop;
+    public AbstractProperty $prop;
 
-    public function testInstanceOf()
+    public function testInstanceOf(): void
     {
         $this->assertInstanceOf(AbstractProperty::class, $this->prop);
         $this->assertInstanceOf(PropertyInterface::class, $this->prop);
@@ -25,7 +22,7 @@ abstract class AbstractTestingPropWithoutSport extends TestCase
      * @param string $valueEntity
      * @param string $valueDTO
      */
-    public function testIsEqual(string $valueEntity, string $valueDTO)
+    public function testIsEqual(string $valueEntity, string $valueDTO): void
     {
         $stubSport = $this->getStubProp($valueEntity);
         $stubDTO = $this->getStubDTO($valueDTO);
@@ -39,7 +36,7 @@ abstract class AbstractTestingPropWithoutSport extends TestCase
      * @param string $valueEntity
      * @param string $valueDTO
      */
-    public function testIsNotEqual(string $valueEntity, string $valueDTO)
+    public function testIsNotEqual(string $valueEntity, string $valueDTO): void
     {
         $stubSport = $this->getStubProp($valueEntity);
         $stubDTO = $this->getStubDTO($valueDTO);
@@ -47,7 +44,7 @@ abstract class AbstractTestingPropWithoutSport extends TestCase
         $this->assertFalse($this->prop->isEq($stubSport, $stubDTO));
     }
 
-    public function testLookForOutData()
+    public function testLookForOutData(): void
     {
         $stubDTO = $this->getStubDTO('Test');
         $this->assertNull($this->prop->lookForOutData($stubDTO));
@@ -65,7 +62,7 @@ abstract class AbstractTestingPropWithoutSport extends TestCase
         return $stubProp;
     }
 
-    public function additionProviderForEqual()
+    public function additionProviderForEqual(): array
     {
         return [
             ['Name', 'name'],
@@ -77,7 +74,7 @@ abstract class AbstractTestingPropWithoutSport extends TestCase
         ];
     }
 
-    public function additionProviderForNotEqual()
+    public function additionProviderForNotEqual(): array
     {
         return [
             ['Name ', 'name'],

@@ -29,11 +29,9 @@ class LeagueRepository extends ServiceEntityRepository
     /**
      * Find Leagues by Pairs
      *
-     * @param array $params
-     *
      * @return League[]
      */
-    public function findByPair(array $params)
+    public function findByPair(array $params): array
     {
         $stringParams = Util::arrayToString($params);
 
@@ -54,7 +52,7 @@ class LeagueRepository extends ServiceEntityRepository
                 LEFT JOIN {$sport->getClassMetadata()->getTableName()} s 
                     ON s.id = l.sport_id                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
                 WHERE 
-                    (l.name, s.name) IN ({$stringParams})
+                    (l.name, s.name) IN ($stringParams)
                 ", $rsm)
             ->getResult();
     }

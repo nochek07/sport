@@ -15,7 +15,7 @@ class AddSportCommandTest extends KernelTestCase
         self::bootKernel();
     }
 
-    public function testSuccessCommand()
+    public function testSuccessCommand(): void
     {
         $result = $this->executeCommand([
             'serialisedData' => '[]'
@@ -23,7 +23,7 @@ class AddSportCommandTest extends KernelTestCase
         $this->assertEquals(0, $result);
     }
 
-    public function testFailCommand()
+    public function testFailCommand(): void
     {
         $result = $this->executeCommand([
             'serialisedData' => '5[]'

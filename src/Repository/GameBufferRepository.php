@@ -28,12 +28,10 @@ class GameBufferRepository extends ServiceEntityRepository
      * Find GameBuffer by Game
      * Find GameBuffer by Game and filter
      *
-     * @param Game $game
-     * @param array $filter
-     *
      * @return GameBuffer[]
+     * @throws \Exception
      */
-    public function findByGame(Game $game, array $filter = [])
+    public function findByGame(Game $game, array $filter = []): array
     {
         $builder = $this->createQueryBuilder('gb')
             ->andWhere('gb.game = :game')

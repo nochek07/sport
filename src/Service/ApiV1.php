@@ -3,6 +3,8 @@
 namespace App\Service;
 
 use App\DTO\GameBufferDTO;
+use App\Repository\{GameBufferRepository, GameRepository};
+use Doctrine\ORM\NonUniqueResultException;
 use App\Entity\{Game, GameBuffer};
 use App\Utils\Util;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,39 +18,18 @@ class ApiV1
     const RESULT_SUCCESS = 1;
     const RESULT_FAIL = 0;
 
-    /**
-     * @var EntityManagerInterface
-     */
-    private $manager;
+    private EntityManagerInterface $manager;
 
-    /**
-     * @var PropertyBuilder
-     */
-    private $propertyBuilder;
+    private PropertyBuilder $propertyBuilder;
 
-    /**
-     * @var BackgroundCommander
-     */
-    private $process;
+    private BackgroundCommander $process;
 
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
+    private ValidatorInterface $validator;
 
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
+    private SerializerInterface $serializer;
 
     /**
      * ApiV1 constructor.
-     *
-     * @param EntityManagerInterface $manager
-     * @param PropertyBuilder $propertyBuilder
-     * @param BackgroundCommander $process
-     * @param ValidatorInterface $validator
-     * @param SerializerInterface $serializer
      */
     public function __construct(
         EntityManagerInterface $manager,
@@ -66,9 +47,6 @@ class ApiV1
 
     /**
      * Add Game
-     *
-     * @param string $context
-     * @return array
      */
     public function addGameByJson(string $context): array
     {
@@ -100,39 +78,46 @@ class ApiV1
                         $newGames[] = $gameBuffer;
                     }
                 }
-
                 if (sizeof($newGames) > 0) {
                     $this->manager->flush();
                     $this->process->runProcess($newGames);
                 }
-                return ['success' => self::RESULT_SUCCESS];
+                return [
+                    'success' => self::RESULT_SUCCESS
+                ];
             }
         }
-        return ['success' => self::RESULT_FAIL];
+        return [
+            'success' => self::RESULT_FAIL
+        ];
     }
 
     /**
      * Get random game
      * Get random game by filter
      *
-     * @param array $query
-     * @return array
+     * @throws NonUniqueResultException
+     * @throws \Exception
      */
     public function random(array $query): array
     {
         /**
-         * @var Game $randGame
+         * @var GameRepository $gameRepository
          */
-        $randGame = $this->manager
-            ->getRepository(Game::class)
-            ->getRandom();
+        $gameRepository = $this->manager
+            ->getRepository(Game::class);
+        $randGame = $gameRepository->getRandom();
 
         $result = [];
         if ($randGame instanceof Game) {
             $filter = $this->getFilterFromRequest($query);
-            $gamesBuffer = $this->manager
-                ->getRepository(GameBuffer::class)
-                ->findByGame($randGame, $filter);
+
+            /**
+             * @var GameBufferRepository $gameBufferRepository
+             */
+            $gameBufferRepository = $this->manager
+                ->getRepository(GameBuffer::class);
+            $gamesBuffer = $gameBufferRepository->findByGame($randGame, $filter);
 
             $result = [
                 "game" => $randGame,
@@ -144,8 +129,7 @@ class ApiV1
 
     /**
      * Add games by array for command
-     *
-     * @param array $games
+     * @throws NonUniqueResultException
      */
     public function addGamesByArray(array $games): void
     {
@@ -168,12 +152,18 @@ class ApiV1
             $dateEnd = $date->modify("+ $diff hour");
 
             /**
-             * @var Game $foundGame
+             * @var GameRepository $gameRepository
              */
-            $foundGame = $this->manager
-                ->getRepository(Game::class)
-                ->findByBuffer($gameBuffer, $dateStart, $dateEnd);
-            if (!($foundGame instanceof Game)) {
+            $gameRepository = $this->manager
+                ->getRepository(Game::class);
+            $foundGame = $gameRepository->findByBuffer($gameBuffer, $dateStart, $dateEnd);
+            if ($foundGame instanceof Game) {
+                $difference = $date->diff($foundGame->getDate());
+                if ($difference->invert == 1) {
+                    $foundGame->setDate($date);
+                }
+                $gameBuffer->setGame($foundGame);
+            } else {
                 $game = new Game();
                 $game->setLeague($gameBuffer->getLeague());
                 $game->setLanguage($gameBuffer->getLanguage());
@@ -182,12 +172,6 @@ class ApiV1
                 $game->setDate($gameBuffer->getDate());
                 $this->manager->persist($game);
                 $gameBuffer->setGame($game);
-            } else {
-                $difference = $date->diff($foundGame->getDate());
-                if ($difference->invert == 1) {
-                    $foundGame->setDate($date);
-                }
-                $gameBuffer->setGame($foundGame);
             }
             $this->manager->flush();
         }
@@ -195,9 +179,6 @@ class ApiV1
 
     /**
      * Get deserialized data
-     *
-     * @param string $context
-     * @param SerializerInterface $serializer
      *
      * @return GameBufferDTO[][]
      */
@@ -213,9 +194,6 @@ class ApiV1
 
     /**
      * Get Validated DTO Game Buffer
-     *
-     * @param array $events
-     * @param ValidatorInterface $validator
      *
      * @return GameBufferDTO[]
      */
@@ -234,9 +212,6 @@ class ApiV1
 
     /**
      * Get Filter array from query
-     *
-     * @param array $query
-     * @return array
      */
     private function getFilterFromRequest(array $query): array
     {

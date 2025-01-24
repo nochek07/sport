@@ -27,7 +27,7 @@ class ApiV1ControllerTest extends WebTestCase
      * @param array $server
      * @param $content
      */
-    public function testUnsuccessful($method, $server, $content)
+    public function testUnsuccessful(string $method, array $server, $content): void
     {
         $this->client->request($method, '/api/v1/add', [], [],
             $server,
@@ -47,7 +47,7 @@ class ApiV1ControllerTest extends WebTestCase
      * @param string $method
      * @param string $uri
      */
-    public function testNotAllowedMethod($method, $uri)
+    public function testNotAllowedMethod(string $method, string $uri): void
     {
         $this->client->request($method, $uri);
         $this->assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
@@ -58,7 +58,7 @@ class ApiV1ControllerTest extends WebTestCase
      *
      * @param $content
      */
-    public function testAddEventsFirst($content)
+    public function testAddEventsFirst($content): void
     {
         $this->addEvents($content);
         sleep(2);
@@ -70,7 +70,7 @@ class ApiV1ControllerTest extends WebTestCase
      *
      * @param array $parameters
      */
-    public function testRandom($parameters)
+    public function testRandom(array $parameters): void
     {
         $this->client->request(Request::METHOD_GET, '/api/v1/random', $parameters);
 
@@ -87,7 +87,7 @@ class ApiV1ControllerTest extends WebTestCase
         $this->assertLessThanOrEqual(count($results["buffers"]), 0);
     }
 
-    public function testAddEventsSecond()
+    public function testAddEventsSecond(): void
     {
         $content =
             '{"events": [
@@ -108,7 +108,7 @@ class ApiV1ControllerTest extends WebTestCase
     /**
      * @param $content
      */
-    public function addEvents($content)
+    public function addEvents($content): void
     {
         $this->client->request(Request::METHOD_POST, '/api/v1/add', [], [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -122,7 +122,7 @@ class ApiV1ControllerTest extends WebTestCase
         $this->assertSame($results["success"], ApiV1::RESULT_SUCCESS);
     }
 
-    public function additionProvider()
+    public function additionProvider(): \Generator
     {
         yield [Request::METHOD_POST, ['CONTENT_TYPE' => 'application/json'], '{}'];
         yield [Request::METHOD_POST, ['CONTENT_TYPE' => 'application/json'], null];
@@ -131,13 +131,13 @@ class ApiV1ControllerTest extends WebTestCase
         yield [Request::METHOD_POST, ['CONTENT_TYPE' => 'application/json'], '{"events": ["lang": "русский"]}'];
     }
 
-    public function additionAllowedProvider()
+    public function additionAllowedProvider(): \Generator
     {
         yield [Request::METHOD_GET, '/api/v1/add'];
         yield [Request::METHOD_POST, '/api/v1/random'];
     }
 
-    public function additionAddProvider()
+    public function additionAddProvider(): \Generator
     {
         yield [
             '{"events": [
@@ -185,7 +185,7 @@ class ApiV1ControllerTest extends WebTestCase
         ];
     }
 
-    public function additionRandomProvider()
+    public function additionRandomProvider(): \Generator
     {
         yield [
             []

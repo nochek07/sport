@@ -3,6 +3,7 @@
 namespace App\Tests\Service;
 
 use App\DTO\GameBufferDTO;
+use Doctrine\ORM\NonUniqueResultException;
 use App\Entity\{Game, GameBuffer, Sport};
 use App\Service\{ApiV1, PropertyBuilder};
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,35 +15,17 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ApiV1Test extends KernelTestCase
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $manager;
+    private EntityManagerInterface $manager;
 
-    /**
-     * @var ApiV1
-     */
-    private $stubApi;
+    private ApiV1 $stubApi;
 
-    /**
-     * @var ApiV1
-     */
-    private $api;
+    private ApiV1 $api;
 
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
+    private SerializerInterface $serializer;
 
-    /**
-     * @var ValidatorInterface
-     */
-    private $validator;
+    private ValidatorInterface $validator;
 
-    /**
-     * @var PropertyBuilder
-     */
-    private $propertyBuilder;
+    private PropertyBuilder $propertyBuilder;
 
     public function setUp(): void
     {
@@ -58,7 +41,10 @@ class ApiV1Test extends KernelTestCase
         $this->stubApi = $this->createMock(ApiV1::class);
     }
 
-    public function testAddGamesByArray()
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function testAddGamesByArray(): void
     {
         $id = $this->setTestData([
             "lang" => "русский",
@@ -71,8 +57,7 @@ class ApiV1Test extends KernelTestCase
         ]);
         $this->assertGreaterThan(0, $id);
 
-        $result = $this->api->addGamesByArray([$id, 4]);
-        $this->assertEquals(0, $result);
+        $this->api->addGamesByArray([$id, 4]);
 
         $gameBuffer = $this->getGameBuffer($id);
         $this->assertNotNull($gameBuffer);
@@ -82,7 +67,10 @@ class ApiV1Test extends KernelTestCase
         $this->assertInstanceOf(Game::class, $game);
     }
 
-    public function testUpdateGamesByArray()
+    /**
+     * @throws NonUniqueResultException
+     */
+    public function testUpdateGamesByArray(): void
     {
         $nameSport = "Гандбол";
         $data = [
@@ -107,8 +95,7 @@ class ApiV1Test extends KernelTestCase
         $this->assertGreaterThan(0, $id);
         $this->assertInstanceOf(Sport::class, $sport);
 
-        $result = $this->api->addGamesByArray([$id, 4]);
-        $this->assertEquals(0, $result);
+        $this->api->addGamesByArray([$id, 4]);
 
         $gameBuffer = $this->getGameBuffer($id);
         $this->assertNotNull($gameBuffer);
@@ -122,8 +109,7 @@ class ApiV1Test extends KernelTestCase
         $idNew = $this->setTestData($data);
         $this->assertGreaterThan(0, $idNew);
 
-        $result = $this->api->addGamesByArray([$idNew, 4]);
-        $this->assertEquals(0, $result);
+        $this->api->addGamesByArray([$idNew, 4]);
 
         $gameBufferNew = $this->getGameBuffer($idNew);
         $gameNew = $gameBufferNew->getGame();
@@ -135,8 +121,9 @@ class ApiV1Test extends KernelTestCase
      *
      * @param int $size
      * @param array $events
+     * @throws \ReflectionException
      */
-    public function testCheckValidData(int $size, array $events)
+    public function testCheckValidData(int $size, array $events): void
     {
         $class = new ReflectionClass(ApiV1::class);
         $method = $class->getMethod('getDeserializedData');
@@ -165,8 +152,9 @@ class ApiV1Test extends KernelTestCase
      *
      * @param int $size
      * @param array $events
+     * @throws \ReflectionException
      */
-    public function testCheckInvalidData(int $size, array $events)
+    public function testCheckInvalidData(int $size, array $events): void
     {
         $class = new ReflectionClass(ApiV1::class);
         $method = $class->getMethod('getDeserializedData');
@@ -197,8 +185,9 @@ class ApiV1Test extends KernelTestCase
      *
      * @param int $size
      * @param array $parameters
+     * @throws \ReflectionException
      */
-    public function testGetFilterFromRequest(int $size, array $parameters)
+    public function testGetFilterFromRequest(int $size, array $parameters): void
     {
         $class = new ReflectionClass(ApiV1::class);
         $method = $class->getMethod('getFilterFromRequest');
@@ -209,12 +198,6 @@ class ApiV1Test extends KernelTestCase
         $this->assertCount($size, $result);
     }
 
-    /**
-     * @param array $event
-     * @return int
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
     private function setTestData(array $event): int
     {
         $dto = $this->serializer->deserialize(json_encode($event), 'App\DTO\GameBufferDTO', JsonEncoder::FORMAT);
@@ -235,10 +218,6 @@ class ApiV1Test extends KernelTestCase
         return $gameBufferTest->getId();
     }
 
-    /**
-     * @param int $id
-     * @return GameBuffer|null
-     */
     private function getGameBuffer(int $id): ?GameBuffer
     {
         return $this->manager
@@ -246,7 +225,7 @@ class ApiV1Test extends KernelTestCase
             ->find($id);
     }
 
-    public function additionValidDTOProvider()
+    public function additionValidDTOProvider(): \Generator
     {
         yield [
             1, [
@@ -289,7 +268,7 @@ class ApiV1Test extends KernelTestCase
         ];
     }
 
-    public function additionInvalidDTOProvider()
+    public function additionInvalidDTOProvider(): \Generator
     {
         yield [
             0, []
@@ -386,7 +365,7 @@ class ApiV1Test extends KernelTestCase
         ];
     }
 
-    public function additionFilterProvider()
+    public function additionFilterProvider(): \Generator
     {
         yield [
             0, []

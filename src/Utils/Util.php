@@ -6,10 +6,6 @@ class Util
 {
     /**
      * Array to string for query
-     *
-     * @param array $params
-     *
-     * @return string
      */
     static public function arrayToString(array $params): string
     {
@@ -17,12 +13,12 @@ class Util
             if (is_array($item)) {
                 foreach ($item as &$value) {
                     if (gettype($value) == 'string') {
-                        $value = "'{$value}'";
+                        $value = "'$value'";
                     }
                 }
                 $item = "(" . implode(',', $item) . ")";
             } elseif (gettype($item) == 'string') {
-                $item = "'{$item}'";
+                $item = "'$item'";
             }
             $carry .= ($carry ? ',' : '') . $item;
             return $carry;
@@ -31,13 +27,9 @@ class Util
 
     /**
      * Check string for date
-     *
-     * @param string $str
-     *
-     * @return bool
      */
     static public function isDate(string $str): bool
     {
-        return empty(trim($str)) ? false : is_numeric(strtotime($str));
+        return !empty(trim($str)) && is_numeric(strtotime($str));
     }
 }

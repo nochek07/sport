@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use Doctrine\ORM\NonUniqueResultException;
 use App\Entity\{Game, GameBuffer};
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -27,15 +28,9 @@ class GameRepository extends ServiceEntityRepository
     /**
      * Find Game By GameBuffer and period
      *
-     * @param GameBuffer $buffer
-     * @param \DateTimeInterface $dateStart
-     * @param \DateTimeInterface $dateEnd
-     *
-     * @return Game|null Returns an array of Game objects
-     *
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
-    public function findByBuffer(GameBuffer $buffer, \DateTimeInterface $dateStart, \DateTimeInterface $dateEnd)
+    public function findByBuffer(GameBuffer $buffer, \DateTimeInterface $dateStart, \DateTimeInterface $dateEnd): ?Game
     {
         return $this->createQueryBuilder('g')
             ->andWhere('g.language = :lang')
@@ -59,11 +54,9 @@ class GameRepository extends ServiceEntityRepository
     /**
      * Get random Game
      *
-     * @return Game|null Returns an array of Game objects
-     *
-     * @throws \Doctrine\ORM\NonUniqueResultException
+     * @throws NonUniqueResultException
      */
-    public function getRandom()
+    public function getRandom(): ?Game
     {
         return $this->createQueryBuilder('g')
             ->addOrderBy('RAND()')

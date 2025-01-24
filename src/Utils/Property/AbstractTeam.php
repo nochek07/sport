@@ -3,6 +3,8 @@
 namespace App\Utils\Property;
 
 use App\DTO\GameBufferDTO;
+use App\Repository\TeamRepository;
+use App\Entity\{Sport, Team};
 
 abstract class AbstractTeam extends AbstractProperty
 {
@@ -10,44 +12,41 @@ abstract class AbstractTeam extends AbstractProperty
      * Find by criteria
      *
      * @param array $criteria
-     *
-     * @return \App\Entity\Team[]
+     * @return Team[]
      */
-    public function findBy(array $criteria)
+    public function findBy(array $criteria): array
     {
-        return $this->getManager()
-                ->getRepository(\App\Entity\Team::class)
-                ->findByPair($criteria) ?? [];
+        /**
+         * @var TeamRepository $teamRepository
+         */
+        $teamRepository = $this->getManager()
+            ->getRepository(Team::class);
+        return $teamRepository->findByPair($criteria) ?? [];
     }
 
     /**
      * Is equal
      *
-     * @param \App\Entity\Team $entity
+     * @param Team $entity
      * @param GameBufferDTO $dto
-     * @param \App\Entity\Sport|null $sport
+     * @param Sport|null $sport
      *
      * @return bool
      */
-    public function isEq($entity, GameBufferDTO $dto, $sport = null): bool
+    public function isEq($entity, GameBufferDTO $dto, ?Sport $sport = null): bool
     {
         $value = $this->getValueOfTeam($dto);
         return (strcasecmp($entity->getName(), $value) == 0
-            && $entity->getSport() == $sport);
+            && $entity->getSport() === $sport);
     }
 
     /**
      * Insert Entity
-     *
-     * @param GameBufferDTO $dto
-     * @param \App\Entity\Sport|null $sport
-     *
-     * @return \App\Entity\Team
      */
-    public function insert(GameBufferDTO $dto, $sport = null)
+    public function insert(GameBufferDTO $dto, ?Sport $sport = null): Team
     {
         $value = $this->getValueOfTeam($dto);
-        $team = new \App\Entity\Team();
+        $team = new Team();
         $team->setName($value);
         $team->setSport($sport);
         $this->getManager()->persist($team);
@@ -56,10 +55,6 @@ abstract class AbstractTeam extends AbstractProperty
 
     /**
      * Get default value of Team
-     *
-     * @param GameBufferDTO $dto
-     *
-     * @return string
      */
     abstract public function getValueOfTeam(GameBufferDTO $dto): string;
 }

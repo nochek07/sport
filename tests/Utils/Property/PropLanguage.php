@@ -4,7 +4,6 @@ namespace App\Tests\Utils\Property;
 
 use App\DTO\GameBufferDTO;
 use App\Entity\Language;
-use App\Utils\Property\PropLanguage;
 use Doctrine\ORM\EntityManagerInterface;
 
 class PropLanguage extends AbstractTestingPropWithoutSport

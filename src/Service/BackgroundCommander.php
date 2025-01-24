@@ -6,27 +6,19 @@ use App\Command\AddSportCommand;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class BackgroundCommander
 {
     private $defaultCommand;
 
-    /**
-     * @var KernelInterface
-     */
-    private $kernel;
+    private KernelInterface $kernel;
 
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
+    private SerializerInterface $serializer;
 
     /**
      * BackgroundCommander constructor.
-     *
-     * @param KernelInterface $kernel
-     * @param SerializerInterface $serializer
      */
     public function __construct(KernelInterface $kernel, SerializerInterface $serializer)
     {
@@ -38,9 +30,9 @@ class BackgroundCommander
     /**
      * Run background process
      *
-     * @param array $params
+     * @throws ExceptionInterface
      */
-    public function runProcess(array $params)
+    public function runProcess(array $params): void
     {
         $data = $this->serializer->normalize($params, null, ['groups' => 'id_game']);
         $newData = array_reduce($data, function ($carry, $item) {

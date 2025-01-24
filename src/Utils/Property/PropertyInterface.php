@@ -3,6 +3,7 @@
 namespace App\Utils\Property;
 
 use App\DTO\GameBufferDTO;
+use App\Entity\Sport;
 
 interface PropertyInterface
 {
@@ -10,7 +11,6 @@ interface PropertyInterface
      * Find by criteria
      *
      * @param array $criteria
-     *
      * @return mixed
      */
     public function findBy(array $criteria);
@@ -20,18 +20,17 @@ interface PropertyInterface
      *
      * @param mixed $entity
      * @param GameBufferDTO $dto
-     * @param \App\Entity\Sport|null $sport
+     * @param Sport|null $sport
      * @return bool
      */
-    public function isEq($entity, GameBufferDTO $dto, $sport = null): bool;
+    public function isEq($entity, GameBufferDTO $dto, ?Sport $sport = null): bool;
 
     /**
      * Insert Entity
      *
      * @param GameBufferDTO $dto
-     * @param \App\Entity\Sport|null $sport
-     *
+     * @param Sport|null $sport
      * @return mixed
      */
-    public function insert(GameBufferDTO $dto, $sport = null);
+    public function insert(GameBufferDTO $dto, ?Sport $sport = null);
 }

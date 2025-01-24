@@ -3,29 +3,19 @@
 namespace App\Utils\Property;
 
 use App\DTO\GameBufferDTO;
+use App\Entity\Sport;
 use Doctrine\ORM\EntityManagerInterface;
 
 abstract class AbstractProperty implements PropertyInterface, OutDataInterface
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $manager;
+    private EntityManagerInterface $manager;
 
-    /**
-     * @var array
-     */
-    private $outData = [];
+    private array $outData = [];
 
-    /**
-     * @var array
-     */
-    private $inData = [];
+    private array $inData = [];
 
     /**
      * PropSport constructor.
-     *
-     * @param EntityManagerInterface $manager
      */
     public function __construct(EntityManagerInterface $manager)
     {
@@ -34,20 +24,16 @@ abstract class AbstractProperty implements PropertyInterface, OutDataInterface
 
     /**
      * Get Entity Manager
-     *
-     * @return EntityManagerInterface
      */
-    public function getManager()
+    public function getManager(): EntityManagerInterface
     {
         return $this->manager;
     }
 
     /**
      * Get Out Data
-     *
-     * @return array
      */
-    public function getOutData()
+    public function getOutData(): array
     {
         return $this->outData;
     }
@@ -64,7 +50,7 @@ abstract class AbstractProperty implements PropertyInterface, OutDataInterface
      * {@inheritDoc}
      */
     public function addInData($value) {
-        array_push($this->inData, $value);
+        $this->inData[] = $value;
     }
 
     /**
@@ -79,11 +65,10 @@ abstract class AbstractProperty implements PropertyInterface, OutDataInterface
      * Look for OutData
      *
      * @param GameBufferDTO $dto
-     * @param \App\Entity\Sport|null $sport
-     *
+     * @param Sport|null $sport
      * @return mixed|null
      */
-    public function lookForOutData(GameBufferDTO $dto, $sport = null)
+    public function lookForOutData(GameBufferDTO $dto, ?Sport $sport = null)
     {
         foreach ($this->outData as $entity) {
             if ($this->isEq($entity, $dto, $sport)) {
@@ -101,10 +86,10 @@ abstract class AbstractProperty implements PropertyInterface, OutDataInterface
     /**
      * {@inheritDoc}
      */
-    abstract public function isEq($entity, GameBufferDTO $dto, $sport = null): bool;
+    abstract public function isEq($entity, GameBufferDTO $dto, ?Sport $sport = null): bool;
 
     /**
      * {@inheritDoc}
      */
-    abstract public function insert(GameBufferDTO $dto, $sport = null);
+    abstract public function insert(GameBufferDTO $dto, ?Sport $sport = null);
 }

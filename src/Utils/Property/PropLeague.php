@@ -3,6 +3,8 @@
 namespace App\Utils\Property;
 
 use App\DTO\GameBufferDTO;
+use App\Repository\LeagueRepository;
+use App\Entity\{League, Sport};
 
 class PropLeague extends AbstractProperty
 {
@@ -10,42 +12,38 @@ class PropLeague extends AbstractProperty
      * Find by criteria
      *
      * @param array $criteria
-     *
-     * @return \App\Entity\League[]
+     * @return League[]
      */
-    public function findBy(array $criteria)
+    public function findBy(array $criteria): array
     {
-        return $this->getManager()
-                ->getRepository(\App\Entity\League::class)
-                ->findByPair($criteria) ?? [];
+        /**
+         * @var LeagueRepository $leagueRepository
+         */
+        $leagueRepository = $this->getManager()
+            ->getRepository(League::class);
+        return $leagueRepository->findByPair($criteria) ?? [];
     }
 
     /**
      * Is equal
      *
-     * @param \App\Entity\League $entity
+     * @param League $entity
      * @param GameBufferDTO $dto
-     * @param \App\Entity\Sport $sport
-     *
+     * @param Sport|null $sport
      * @return bool
      */
-    public function isEq($entity, GameBufferDTO $dto, $sport = null): bool
+    public function isEq($entity, GameBufferDTO $dto, ?Sport $sport = null): bool
     {
         return (strcasecmp($entity->getName(), $dto->getLeague()) == 0
-            && !is_null($sport) && $entity->getSport() == $sport);
+            && !is_null($sport) && $entity->getSport() === $sport);
     }
 
     /**
      * Insert Entity
-     *
-     * @param GameBufferDTO $dto
-     * @param \App\Entity\Sport|null $sport
-     *
-     * @return \App\Entity\League
      */
-    public function insert(GameBufferDTO $dto, $sport = null)
+    public function insert(GameBufferDTO $dto, ?Sport $sport = null): League
     {
-        $league = new \App\Entity\League();
+        $league = new League();
         $league->setName($dto->getLeague());
         $league->setSport($sport);
         $this->getManager()->persist($league);

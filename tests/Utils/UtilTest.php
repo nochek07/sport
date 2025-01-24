@@ -13,12 +13,12 @@ class UtilTest extends TestCase
      * @param string $expected
      * @param array $data
      */
-    public function testArrayToString($expected, $data)
+    public function testArrayToString(string $expected, array $data): void
     {
         $this->assertSame($expected, Util::arrayToString($data));
     }
 
-    public function testIsDate()
+    public function testIsDate(): void
     {
         $this->assertFalse(Util::isDate(''));
         $this->assertFalse(Util::isDate(' '));
@@ -28,7 +28,7 @@ class UtilTest extends TestCase
         $this->assertTrue(Util::isDate('2020-02-01'));
     }
 
-    public function additionProvider()
+    public function additionProvider(): array
     {
         return [
             ["(1,2),(0,4)", [[1,2],[0,4]]],

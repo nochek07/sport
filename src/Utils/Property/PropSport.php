@@ -3,6 +3,7 @@
 namespace App\Utils\Property;
 
 use App\DTO\GameBufferDTO;
+use App\Entity\Sport;
 
 class PropSport extends AbstractProperty
 {
@@ -10,41 +11,34 @@ class PropSport extends AbstractProperty
      * Find by criteria
      *
      * @param array $criteria
-     *
-     * @return \App\Entity\Sport[]
+     * @return Sport[]
      */
-    public function findBy(array $criteria)
+    public function findBy(array $criteria): array
     {
         return $this->getManager()
-                ->getRepository(\App\Entity\Sport::class)
-                ->findBy(['name' => $criteria]) ?? [];
+            ->getRepository(Sport::class)
+            ->findBy(['name' => $criteria]) ?? [];
     }
 
     /**
      * Is equal
      *
-     * @param \App\Entity\Sport $entity
+     * @param Sport $entity
      * @param GameBufferDTO $dto
-     * @param \App\Entity\Sport $sport
-     *
+     * @param Sport|null $sport
      * @return bool
      */
-    public function isEq($entity, GameBufferDTO $dto, $sport = null): bool
+    public function isEq($entity, GameBufferDTO $dto, ?Sport $sport = null): bool
     {
         return (strcasecmp($entity->getName(), $dto->getSport()) == 0);
     }
 
     /**
      * Insert Entity
-     *
-     * @param GameBufferDTO $dto
-     * @param \App\Entity\Sport|null $sport
-     *
-     * @return \App\Entity\Sport
      */
-    public function insert(GameBufferDTO $dto, $sport = null)
+    public function insert(GameBufferDTO $dto, ?Sport $sport = null): Sport
     {
-        $sportEntity = new \App\Entity\Sport();
+        $sportEntity = new Sport();
         $sportEntity->setName($dto->getSport());
         $this->getManager()->persist($sportEntity);
         return $sportEntity;

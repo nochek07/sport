@@ -9,23 +9,20 @@ use ReflectionProperty;
 
 class AbstractPropertyTest extends TestCase
 {
-    /**
-     * @var AbstractProperty
-     */
-    private $stubAbstractProperty;
+    private AbstractProperty $stubAbstractProperty;
 
     public function setUp(): void
     {
         $this->stubAbstractProperty = $this->getMockForAbstractClass(AbstractProperty::class, [], '', false);
     }
 
-    public function testInstanceOf()
+    public function testInstanceOf(): void
     {
         $this->assertInstanceOf(PropertyInterface::class, $this->stubAbstractProperty);
         $this->assertInstanceOf(OutDataInterface::class, $this->stubAbstractProperty);
     }
 
-    public function testAddOutData()
+    public function testAddOutData(): void
     {
         $this->assertCount(0, $this->stubAbstractProperty->getOutData());
 
@@ -39,7 +36,10 @@ class AbstractPropertyTest extends TestCase
         $this->assertCount(3, $this->stubAbstractProperty->getOutData());
     }
 
-    public function testAddInData()
+    /**
+     * @throws \ReflectionException
+     */
+    public function testAddInData(): void
     {
         $this->assertCount(0, self::getPrivate($this->stubAbstractProperty, 'inData'));
 
@@ -50,7 +50,7 @@ class AbstractPropertyTest extends TestCase
         $this->assertCount(2, self::getPrivate($this->stubAbstractProperty, 'inData'));
     }
 
-    public function testFilingOutData()
+    public function testFilingOutData(): void
     {
         $this->stubAbstractProperty->expects($this->any())
             ->method('findBy')
@@ -63,13 +63,17 @@ class AbstractPropertyTest extends TestCase
         $this->assertCount(1, $this->stubAbstractProperty->getOutData());
     }
 
-    public function testLookForOutData()
+    public function testLookForOutData(): void
     {
         $stubDTO = $this->createMock(GameBufferDTO::class);
         $this->assertNull($this->stubAbstractProperty->lookForOutData($stubDTO));
     }
 
-    public static function getPrivate($object, $property) {
+    /**
+     * @throws \ReflectionException
+     */
+    public static function getPrivate($object, $property)
+    {
         $reflector = new ReflectionProperty(AbstractProperty::class, $property);
         $reflector->setAccessible(true);
         return $reflector->getValue($object);

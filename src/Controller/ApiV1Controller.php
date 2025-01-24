@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\ApiV1;
+use Doctrine\ORM\NonUniqueResultException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request};
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,13 +19,8 @@ class ApiV1Controller extends AbstractController
 {
     /**
      * @Route("/add", name="add_post", methods={"POST"})
-     *
-     * @param Request $request
-     * @param ApiV1 $api
-     *
-     * @return JsonResponse
      */
-    public function add(Request $request, ApiV1 $api)
+    public function add(Request $request, ApiV1 $api): JsonResponse
     {
         $result = $api->addGameByJson($request->getContent());
 
@@ -34,13 +30,9 @@ class ApiV1Controller extends AbstractController
 
     /**
      * @Route("/random", name="random", methods={"GET"})
-     *
-     * @param Request $request
-     * @param ApiV1 $api
-     * @param SerializerInterface $serializer
-     * @return JsonResponse
+     * @throws NonUniqueResultException
      */
-    public function random(Request $request, ApiV1 $api, SerializerInterface $serializer)
+    public function random(Request $request, ApiV1 $api, SerializerInterface $serializer): JsonResponse
     {
         $result = $api->random($request->query->all());
         $data = $serializer->serialize($result, JsonEncoder::FORMAT, [
@@ -51,11 +43,7 @@ class ApiV1Controller extends AbstractController
         return $this->modifiedResponse($response);
     }
 
-    /**
-     * @param JsonResponse $response
-     * @return JsonResponse
-     */
-    private function modifiedResponse(JsonResponse $response)
+    private function modifiedResponse(JsonResponse $response): JsonResponse
     {
         $response->setEncodingOptions(JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
         $response->headers->set('Version', 1);
